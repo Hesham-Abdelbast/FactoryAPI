@@ -7,6 +7,8 @@ namespace Application.Interface
         // Create
         Task<Guid> AddAsync(TransactionDto entity);
 
+        Task<IEnumerable<TransactionDto>> GetAllByMerchantIdAsync(Guid merchantId);
+
         // Read (Get by Id)
         Task<TransactionDto?> GetByIdAsync(Guid id);
 

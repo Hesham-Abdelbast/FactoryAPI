@@ -39,6 +39,35 @@ namespace FactoryAPI.Controllers
         }
 
         // ============================================================
+        // 📋 جلب كل المعاملات
+        // ============================================================
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<TResponse<List<TransactionDto>>>> GetAllByMerchantId(Guid merchantId)
+        {
+            try
+            {
+                var result = await services.GetAllByMerchantIdAsync(merchantId);
+                return Ok(new TResponse<List<TransactionDto>>()
+                {
+                    Success = true,
+                    Data = result.ToList(),
+                    ReturnMsg = "تم جلب جميع المعاملات بنجاح."
+                });
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"{GetType().Name}.{nameof(GetAllByMerchantId)}");
+                return Ok(new TResponse<List<TransactionDto>>
+                {
+                    Success = false,
+                    ReturnMsg = "حدث خطأ أثناء جلب المعاملات: " + ex.Message
+                });
+            }
+        }
+
+        // ============================================================
         // 🔎 جلب معاملة حسب رقمها
         // ============================================================
         [HttpGet("{id:guid}")]
