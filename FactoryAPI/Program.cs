@@ -40,28 +40,13 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 app.UseCors("AllowAll");
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-var uploadFolder = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory())!.Parent!.FullName,
-    builder.Configuration["UploadSettings:UploadFolder"]!);
-
-var RequestPath = builder.Configuration["UploadSettings:RequestPath"]!;
-Console.WriteLine("Upload Folder: " + uploadFolder);
-
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(uploadFolder),
-    RequestPath = RequestPath,
-});
-
 
 app.MapControllers();
 

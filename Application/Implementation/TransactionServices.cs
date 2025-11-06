@@ -122,6 +122,15 @@ namespace Application.Implementation
         }
 
         // ============================================================
+        // 📋 جلب كل المعاملات بناءً على معرف التاجر
+        // ============================================================
+        public async Task<IEnumerable<TransactionDto>> GetAllByMerchantIdAsync(Guid merchantId)
+        {
+            var entities = await _unitOfWork.Transaction.All.Where(tr => tr.MerchantId == merchantId).ToListAsync();
+            return _mapper.Map<IEnumerable<TransactionDto>>(entities);
+        }
+
+        // ============================================================
         // 🔍 التأكد من وجود معاملة برقم معين
         // ============================================================
         public async Task<bool> ExistsAsync(Guid id)
