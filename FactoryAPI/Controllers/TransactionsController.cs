@@ -41,14 +41,14 @@ namespace FactoryAPI.Controllers
         // ============================================================
         // 📋 جلب كل المعاملات
         // ============================================================
-        [HttpGet]
+        [HttpGet("{id:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<TResponse<List<TransactionDto>>>> GetAllByMerchantId(Guid merchantId)
+        public async Task<ActionResult<TResponse<List<TransactionDto>>>> GetAllByMerchantId(Guid id)
         {
             try
             {
-                var result = await services.GetAllByMerchantIdAsync(merchantId);
+                var result = await services.GetAllByMerchantIdAsync(id);
                 return Ok(new TResponse<List<TransactionDto>>()
                 {
                     Success = true,

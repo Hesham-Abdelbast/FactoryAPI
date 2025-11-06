@@ -22,7 +22,8 @@ namespace FactoryAPI.Controllers
                 return Ok(new TResponse<List<StoreSummaryDto>>()
                 {
                     Success = true,
-                    ReturnMsg = "تم جلب جميع المواد المخزنة بنجاح."
+                    ReturnMsg = "تم جلب جميع المواد المخزنة بنجاح.",
+                    Data = result.ToList(),
                 });
             }
             catch (Exception ex)
