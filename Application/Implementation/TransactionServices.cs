@@ -121,6 +121,18 @@ namespace Application.Implementation
             return _mapper.Map<IEnumerable<TransactionDto>>(entities);
         }
 
+
+        // ============================================================
+        // 📋  جلب كل المعاملات
+        // ============================================================
+        public async Task<IEnumerable<TransactionDto>> GetAllByMerchantIdAsync(Guid merchantId)
+        {
+            var entities = await _unitOfWork.Transaction.All
+                .Where(tr => tr.MerchantId == merchantId)
+                .ToListAsync();
+
+            return _mapper.Map<IEnumerable<TransactionDto>>(entities);
+        }
         // ============================================================
         // 📋 جلب كل المعاملات بناءً على معرف التاجر
         // ============================================================
