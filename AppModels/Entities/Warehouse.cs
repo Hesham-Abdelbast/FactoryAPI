@@ -15,6 +15,6 @@ namespace AppModels.Entities
         public string? Email { get; set; }
 
         public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
-        public ICollection<MaterialType> materialTypes { get; set; } = new List<MaterialType>();
+        public ICollection<WarehouseInventory> WarehouseInventory { get; set; } = new List<WarehouseInventory>();
     }
 }

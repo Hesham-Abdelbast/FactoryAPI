@@ -13,7 +13,7 @@ namespace Application.Interface
 
         // Read (Get all)
         Task<IEnumerable<WarehouseDto>> GetAllAsync(PaginationEntity param);
-
+        Task<IEnumerable<WarehouseDto>> GetAllAsync();
         // Update
         Task<bool> UpdateAsync(WarehouseDto entity);
 

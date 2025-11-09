@@ -15,7 +15,7 @@ namespace FactoryAPI.Controllers
         // ============================================================
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<TResponse<List<WarehouseDto>>>> GetAll(PaginationEntity param)
+        public async Task<ActionResult<TResponse<List<WarehouseDto>>>> GetAllWithPagination(PaginationEntity param)
         {
             try
             {
@@ -38,6 +38,35 @@ namespace FactoryAPI.Controllers
                 });
             }
         }
+        // ============================================================
+        // 📋 جلب كل المخازن
+        // ============================================================
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<TResponse<List<WarehouseDto>>>> GetAll()
+        {
+            try
+            {
+                var result = await services.GetAllAsync();
+                return Ok(new TResponse<List<WarehouseDto>>
+                {
+                    Success = true,
+                    ReturnMsg = "تم جلب جميع المخازن بنجاح.",
+                    Data = result.ToList(),
+                    TotalCount = result.Count()
+                });
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"{GetType().Name}.{nameof(GetAll)}");
+                return Ok(new TResponse<List<WarehouseDto>>
+                {
+                    Success = false,
+                    ReturnMsg = "حدث خطأ أثناء جلب المخازن: " + ex.Message
+                });
+            }
+        }
+
 
         // ============================================================
         // 🔎 جلب مخزن حسب رقم المعرف

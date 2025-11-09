@@ -25,13 +25,21 @@ namespace Application.Implementation
         public async Task<IEnumerable<WarehouseDto>> GetAllAsync(PaginationEntity param)
         {
             var query = _unitOfWork.Warehouse.All;
-
-            var totalCount = await query.CountAsync();
-
             var items = await query
                 .Skip((param.PageIndex - 1) * param.PageSize)
                 .Take(param.PageSize)
                 .ToListAsync();
+
+            var data = _mapper.Map<IEnumerable<WarehouseDto>>(items);
+            return data;
+        }
+        // ============================================================
+        // 📋 جلب كل المخازن
+        // ============================================================
+        public async Task<IEnumerable<WarehouseDto>> GetAllAsync()
+        {
+            var query = _unitOfWork.Warehouse.All;
+            var items = await query.ToListAsync();
 
             var data = _mapper.Map<IEnumerable<WarehouseDto>>(items);
             return data;

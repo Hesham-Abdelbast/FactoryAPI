@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(FAContext))]
-    [Migration("20251108203750_AddWarehouseToTransactions")]
-    partial class AddWarehouseToTransactions
+    [Migration("20251109113603_warehouseInventory")]
+    partial class warehouseInventory
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -102,15 +102,10 @@ namespace DAL.Migrations
                     b.Property<DateTime?>("UpdateDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("WarehouseId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("Name")
                         .IsUnique();
-
-                    b.HasIndex("WarehouseId");
 
                     b.ToTable("MaterialTypes");
                 });
@@ -318,6 +313,49 @@ namespace DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Warehouses");
+                });
+
+            modelBuilder.Entity("AppModels.Entities.WarehouseInventory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CreateBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("CurrentQuantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("MaterialTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("UpdateBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("WarehouseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MaterialTypeId");
+
+                    b.HasIndex("WarehouseId");
+
+                    b.ToTable("WarehouseInventory");
                 });
 
             modelBuilder.Entity("DAL.ApplicationUser", b =>
@@ -538,13 +576,6 @@ namespace DAL.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("AppModels.Entities.MaterialType", b =>
-                {
-                    b.HasOne("AppModels.Entities.Warehouse", null)
-                        .WithMany("materialTypes")
-                        .HasForeignKey("WarehouseId");
-                });
-
             modelBuilder.Entity("AppModels.Entities.StoreInventory", b =>
                 {
                     b.HasOne("AppModels.Entities.MaterialType", "MaterialType")
@@ -579,6 +610,25 @@ namespace DAL.Migrations
                     b.Navigation("MaterialType");
 
                     b.Navigation("Merchant");
+
+                    b.Navigation("Warehouse");
+                });
+
+            modelBuilder.Entity("AppModels.Entities.WarehouseInventory", b =>
+                {
+                    b.HasOne("AppModels.Entities.MaterialType", "MaterialType")
+                        .WithMany()
+                        .HasForeignKey("MaterialTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AppModels.Entities.Warehouse", "Warehouse")
+                        .WithMany("WarehouseInventory")
+                        .HasForeignKey("WarehouseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MaterialType");
 
                     b.Navigation("Warehouse");
                 });
@@ -651,7 +701,7 @@ namespace DAL.Migrations
                 {
                     b.Navigation("Transactions");
 
-                    b.Navigation("materialTypes");
+                    b.Navigation("WarehouseInventory");
                 });
 #pragma warning restore 612, 618
         }

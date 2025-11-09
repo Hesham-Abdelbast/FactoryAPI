@@ -32,7 +32,6 @@ namespace AppModels.Entities
         /// <summary>
         /// Foreign key for the Warehouse involved in the transaction
         /// </summary>
-        [Required]
         public Guid WarehouseId { get; set; }
 
         /// <summary>

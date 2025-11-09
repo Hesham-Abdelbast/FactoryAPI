@@ -1,18 +1,9 @@
 ﻿using AppModels.Common;
-using System.ComponentModel.DataAnnotations;
 
-namespace AppModels.Models
+namespace AppModels.Models.Transaction
 {
-    /// <summary>
-    /// Data Transfer Object representing a material transaction between the factory and a merchant.
-    /// </summary>
-    public sealed class TransactionDto
+    public sealed class InvoiceDto
     {
-        /// <summary>
-        /// Unique identifier for the transaction.
-        /// </summary>
-        public Guid Id { get; set; }
-
         /// <summary>
         /// External system reference or custom code for the transaction.
         /// </summary>
@@ -22,12 +13,6 @@ namespace AppModels.Models
         /// Type of transaction (Income / Outcome).
         /// </summary>
         public TransactionType Type { get; set; }
-
-        /// <summary>
-        /// ID of the material type used in the transaction.
-        /// </summary>
-        public Guid MaterialTypeId { get; set; }
-
         /// <summary>
         /// Name of the material type (from navigation).
         /// </summary>
@@ -76,14 +61,14 @@ namespace AppModels.Models
         public decimal TotalAmount { get; set; }
 
         /// <summary>
-        /// ID of the merchant associated with the transaction.
-        /// </summary>
-        public Guid MerchantId { get; set; }
-
-        /// <summary>
         /// Name of the merchant (from navigation).
         /// </summary>
         public string? MerchantName { get; set; }
+
+        /// <summary>
+        /// Name of the Warehouse (from navigation).
+        /// </summary>
+        public string? WarehouseName { get; set; }
 
         /// <summary>
         /// Additional notes or remarks about the transaction.
@@ -109,6 +94,10 @@ namespace AppModels.Models
         /// Timestamp for when the transaction was created.
         /// </summary>
         public DateTime CreateDate { get; set; }
-    }
 
+        public string CompanyName { get; set; } = string.Empty;
+        public string CompanyAddress { get; set; } = string.Empty;
+        public string CompanyPhone { get; set; } = string.Empty;
+
+    }
 }

@@ -1,6 +1,6 @@
 ﻿using Application.Interface;
 using AppModels.Common;
-using AppModels.Models;
+using AppModels.Models.Transaction;
 using Ejd.GRC.AppModels.Common;
 using Microsoft.AspNetCore.Mvc;
 
@@ -90,14 +90,35 @@ namespace FactoryAPI.Controllers
                 return Ok(new TResponse<TransactionDto> { Success = false, ReturnMsg = "حدث خطأ أثناء جلب المعاملة: " + ex.Message });
             }
         }
+        // ============================================================
+        // 🔎 جلب الفاتوره حسب رقمها
+        // ============================================================
+        [HttpGet("{id:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<TResponse<InvoiceDto?>>> GetInvoiceByIdAsync(Guid id)
+        {
+            try
+            {
+                var result = await services.GetInvoiceByIdAsync(id);
+                if (result == null)
+                    return Ok(new TResponse<InvoiceDto> { Success = false, ReturnMsg = "لم يتم العثور على الفاتوره المطلوبة." });
 
+                return Ok(new TResponse<InvoiceDto> { Success = true, Data = result, ReturnMsg = "تم جلب الفاتوره بنجاح." });
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"{GetType().Name}.{nameof(GetById)}");
+                return Ok(new TResponse<TransactionDto> { Success = false, ReturnMsg = "حدث خطأ أثناء جلب الفاتوره: " + ex.Message });
+            }
+        }
         // ============================================================
         // ➕ إضافة معاملة جديدة
         // ============================================================
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<TResponse<Guid>>> Add([FromBody] TransactionDto dto)
+        public async Task<ActionResult<TResponse<Guid>>> Add([FromBody] CreateTransactionDto dto)
         {
             try
             {
@@ -122,7 +143,7 @@ namespace FactoryAPI.Controllers
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<TResponse<bool>>> Update([FromBody] TransactionDto dto)
+        public async Task<ActionResult<TResponse<bool>>> Update([FromBody] CreateTransactionDto dto)
         {
             try
             {
