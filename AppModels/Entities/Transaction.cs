@@ -30,12 +30,49 @@ namespace AppModels.Entities
         public MaterialType MaterialType { get; set; }
 
         /// <summary>
+        /// Foreign key for the Warehouse involved in the transaction
+        /// </summary>
+        [Required]
+        public Guid WarehouseId { get; set; }
+
+        /// <summary>
+        /// Navigation property for the Warehouse
+        /// </summary>
+        public Warehouse Warehouse { get; set; }
+
+        /// <summary>
+        /// Name of the car driver delivering the material.
+        /// </summary>
+        [StringLength(200)]
+        public string? CarDriverName { get; set; }
+        /// <summary>
+        /// weight of Car And Matreria in the transaction
+        /// </summary>
+        [Required]
+        [Range(0.01, double.MaxValue)]
+        public decimal CarAndMatrerialWeight { get; set; }
+
+        /// <summary>
+        /// weight of Car in the transaction
+        /// </summary>
+        [Required]
+        [Range(0.01, double.MaxValue)]
+        public decimal CarWeight { get; set; }
+
+        /// <summary>
         /// Quantity of material in the transaction
         /// </summary>
         [Required]
         [Range(0.01, double.MaxValue)]
         public decimal Quantity { get; set; }
 
+        [Required]
+        [Range(0.01, double.MaxValue)]
+        public decimal PercentageOfImpurities { get; set; }
+
+        [Required]
+        [Range(0.01, double.MaxValue)]
+        public decimal WeightOfImpurities { get; set; }
         /// <summary>
         /// Price per unit of the material
         /// </summary>
@@ -46,7 +83,7 @@ namespace AppModels.Entities
         /// <summary>
         /// Total amount of the transaction (calculated property)
         /// </summary>
-        public decimal TotalAmount => Quantity * PricePerUnit;
+        public decimal TotalAmount { get; set; }
 
         /// <summary>
         /// Foreign key for the merchant involved in the transaction

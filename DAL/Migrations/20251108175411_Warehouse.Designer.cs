@@ -4,6 +4,7 @@ using DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(FAContext))]
-    partial class FAContextModelSnapshot : ModelSnapshot
+    [Migration("20251108175411_Warehouse")]
+    partial class Warehouse
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -258,9 +261,6 @@ namespace DAL.Migrations
                     b.Property<DateTime?>("UpdateDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("WarehouseId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<decimal>("WeightOfImpurities")
                         .HasColumnType("decimal(18,2)");
 
@@ -269,8 +269,6 @@ namespace DAL.Migrations
                     b.HasIndex("MaterialTypeId");
 
                     b.HasIndex("MerchantId");
-
-                    b.HasIndex("WarehouseId");
 
                     b.ToTable("Transactions");
                 });
@@ -567,17 +565,9 @@ namespace DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("AppModels.Entities.Warehouse", "Warehouse")
-                        .WithMany("Transactions")
-                        .HasForeignKey("WarehouseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("MaterialType");
 
                     b.Navigation("Merchant");
-
-                    b.Navigation("Warehouse");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -646,8 +636,6 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("AppModels.Entities.Warehouse", b =>
                 {
-                    b.Navigation("Transactions");
-
                     b.Navigation("materialTypes");
                 });
 #pragma warning restore 612, 618

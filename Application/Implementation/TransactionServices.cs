@@ -1,10 +1,11 @@
 ﻿using Application.Interface;
+using AppModels.Common;
+using AppModels.Entities;
 using AppModels.Models;
 using AutoMapper;
 using DAL;
+using Ejd.GRC.AppModels.Common;
 using Microsoft.EntityFrameworkCore;
-using AppModels.Entities;
-using AppModels.Common;
 
 namespace Application.Implementation
 {
@@ -63,17 +64,18 @@ namespace Application.Implementation
 
                 var existing = await _unitOfWork.Transaction.FindAsync(entity.Id);
                 if (existing == null)
-                    throw new KeyNotFoundException($"المعاملة بالرقم {entity.Id} غير موجودة.");
+                    throw new KeyNotFoundException($"المعاملة غير موجودة.");
 
                 // تعديل المخزون إذا تغير النوع أو الكمية
-                if ((int)existing.Type !=entity.Type || existing.Quantity != entity.Quantity)
+                if (existing.Type != entity.Type || existing.Quantity != entity.Quantity)
                 {
                     await AdjustInventoryAsync(existing, entity);
                 }
 
                 _mapper.Map(entity, existing);
                 // تعيين معرف فريد للمعاملة
-                existing.TransactionIdentifier = $"TXN-{DateTime.UtcNow:yyyyMMddHHmmssfff}-{Guid.NewGuid().ToString().Substring(0, 3).ToUpper()}";
+                if (string.IsNullOrWhiteSpace(existing.TransactionIdentifier))
+                    existing.TransactionIdentifier = $"TXN-{DateTime.UtcNow:yyyyMMddHHmmssfff}-{Guid.NewGuid().ToString().Substring(0, 3).ToUpper()}";
                 _unitOfWork.Transaction.Update(existing);
                 await _unitOfWork.SaveChangesAsync();
 
@@ -99,6 +101,10 @@ namespace Application.Implementation
                 if (existing == null)
                     throw new KeyNotFoundException($"المعاملة بالرقم {id} غير موجودة.");
                 existing.IsDeleted = true;
+
+                //Update the store inventory accordingly
+                await UpdateInventoryOnDeleteAsync(existing);
+
                 _unitOfWork.Transaction.Update(existing);
                 await _unitOfWork.SaveChangesAsync();
 
@@ -115,10 +121,19 @@ namespace Application.Implementation
         // ============================================================
         // 📋 جلب كل المعاملات
         // ============================================================
-        public async Task<IEnumerable<TransactionDto>> GetAllAsync()
+        public async Task<IEnumerable<TransactionDto>> GetAllAsync(PaginationEntity param)
         {
-            var entities = await _unitOfWork.Transaction.All.ToListAsync();
-            return _mapper.Map<IEnumerable<TransactionDto>>(entities);
+            var query = _unitOfWork.Transaction.All.Include(x=>x.MaterialType).Include(x => x.Merchant);
+
+            var totalCount = await query.CountAsync();
+
+            var items = await query
+                .Skip((param.PageIndex - 1) * param.PageSize)
+                .Take(param.PageSize)
+                .ToListAsync();
+
+            var data = _mapper.Map<IEnumerable<TransactionDto>>(items);
+            return data;
         }
         // ============================================================
         // 📋 جلب كل المعاملات بناءً على معرف التاجر
@@ -185,6 +200,46 @@ namespace Application.Implementation
         }
 
         // ============================================================
+        // 🔧 تعديل المخزون بعد حذف معاملة 
+        // ============================================================
+        private async Task UpdateInventoryOnDeleteAsync(Transaction transaction)
+        {
+            var inventory = await _unitOfWork.StoreInventory
+                .FindBy(x => x.MaterialTypeId == transaction.MaterialTypeId, false)
+                .FirstOrDefaultAsync();
+
+            if (transaction.Type == AppModels.Common.TransactionType.Income)
+            {
+                if (inventory == null || inventory.CurrentQuantity < transaction.Quantity)
+                    throw new Exception("لا توجد كمية كافية في المخزون لتنفيذ عملية الصرف.");
+
+                if (inventory != null)
+                {
+                    inventory.CurrentQuantity -= transaction.Quantity;
+                    _unitOfWork.StoreInventory.Update(inventory);
+                }
+                else
+                {
+                    inventory = new StoreInventory
+                    {
+                        MaterialTypeId = transaction.MaterialTypeId,
+                        CurrentQuantity = transaction.Quantity
+                    };
+                    await _unitOfWork.StoreInventory.InsertAsync(inventory);
+                }
+            }
+            else if (transaction.Type == AppModels.Common.TransactionType.Outcome)
+            {
+
+                inventory.CurrentQuantity += transaction.Quantity;
+                _unitOfWork.StoreInventory.Update(inventory);
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+
+        }
+
+        // ============================================================
         // 🔁 تعديل المخزون عند تحديث معاملة
         // ============================================================
         private async Task AdjustInventoryAsync(Transaction oldTrans, TransactionDto newTrans)
@@ -203,9 +258,9 @@ namespace Application.Implementation
                 inventory.CurrentQuantity += oldTrans.Quantity;
 
             // تطبيق المعاملة الجديدة
-            if (newTrans.Type == (int)TransactionType.Income)
+            if (newTrans.Type == TransactionType.Income)
                 inventory.CurrentQuantity += newTrans.Quantity;
-            else if (newTrans.Type == (int)TransactionType.Outcome)
+            else if (newTrans.Type == TransactionType.Outcome)
             {
                 if (inventory.CurrentQuantity < newTrans.Quantity)
                     throw new Exception("الكمية الجديدة غير متوفرة في المخزون.");

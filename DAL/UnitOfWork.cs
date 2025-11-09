@@ -16,6 +16,7 @@ namespace DAL
         public ITransactionRepository Transaction { get; set; }
         public IStoreInventoryRepository StoreInventory { get; set; }
         public IContactRepository Contact { get; set; }
+        public IWarehouseRepositery Warehouse { get; set; }
         public UnitOfWork(
             FAContext dbContext,
             ILogger<UnitOfWork> logger,
@@ -23,7 +24,8 @@ namespace DAL
             IMerchantRepository merchant,
             IStoreInventoryRepository storeInventory,
             ITransactionRepository transaction,
-            IContactRepository contact)
+            IContactRepository contact,
+            IWarehouseRepositery warehouse)
         {
             _dbContext = dbContext;
             _logger = logger;
@@ -32,6 +34,7 @@ namespace DAL
             StoreInventory = storeInventory;
             Transaction = transaction;
             Contact = contact;
+            Warehouse = warehouse;
         }
 
         public void Dispose()

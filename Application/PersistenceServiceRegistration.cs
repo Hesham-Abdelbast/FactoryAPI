@@ -166,6 +166,7 @@ namespace Application
             services.AddScoped<IStoreInventoryRepository, StoreInventoryRepository>();
             services.AddScoped<IMerchantRepository, MerchantRepository>();
             services.AddScoped<IContactRepository, ContactRepository>();
+            services.AddScoped<IWarehouseRepositery, WarehouseRepositery>();
 
             return services;
         }

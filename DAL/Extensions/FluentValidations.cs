@@ -13,6 +13,7 @@ namespace DAL.Extensions
             modelBuilder.Entity<Transaction>().HasQueryFilter(e => !e.IsDeleted);
             modelBuilder.Entity<StoreInventory>().HasQueryFilter(e => !e.IsDeleted);
             modelBuilder.Entity<Contact>().HasQueryFilter(e => !e.IsDeleted);
+            //modelBuilder.Entity<Warehouse>().HasQueryFilter(e => !e.IsDeleted);
 
 
 
@@ -41,6 +42,10 @@ namespace DAL.Extensions
                 .HasPrecision(18, 2);
 
             modelBuilder.Entity<Transaction>()
+               .Property(t => t.Type)
+               .HasConversion<int>();
+
+            modelBuilder.Entity<Transaction>()
                 .Property(t => t.PricePerUnit)
                 .HasPrecision(18, 2);
 
@@ -52,6 +57,13 @@ namespace DAL.Extensions
                 .HasOne(s => s.MaterialType)
                 .WithOne(m => m.StoreInventory)
                 .HasForeignKey<StoreInventory>(s => s.MaterialTypeId);
+
+            modelBuilder.Entity<Transaction>()
+                .HasOne(t => t.Warehouse)
+                   .WithMany(w => w.Transactions)
+                   .HasForeignKey(t => t.WarehouseId)
+                   .OnDelete(DeleteBehavior.Cascade);
+
 
             return modelBuilder;
 

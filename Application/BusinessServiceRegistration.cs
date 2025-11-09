@@ -29,7 +29,7 @@ namespace Application
             services.AddScoped<IMerchantServices, MerchantServices>();
             services.AddScoped<ITransactionServices, TransactionServices>();
             services.AddScoped<IContactServices, ContactServices>();
-
+            services.AddScoped<IWarehouseServices,WarehouseServices>();
 
 
             return services;

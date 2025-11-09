@@ -37,6 +37,12 @@ namespace DAL
         /// DbSet for store inventory
         /// </summary>
         public DbSet<StoreInventory> StoreInventories { get; set; }
+
+        /// <summary>
+        /// DbSet for warehouses
+        /// </summary>
+        public DbSet<Warehouse> Warehouses { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.ConfigureWarnings(warnings =>

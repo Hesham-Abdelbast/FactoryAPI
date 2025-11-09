@@ -1,4 +1,5 @@
 ﻿using AppModels.Models;
+using Ejd.GRC.AppModels.Common;
 
 namespace Application.Interface
 {
@@ -13,7 +14,7 @@ namespace Application.Interface
         Task<TransactionDto?> GetByIdAsync(Guid id);
 
         // Read (Get all)
-        Task<IEnumerable<TransactionDto>> GetAllAsync();
+        Task<IEnumerable<TransactionDto>> GetAllAsync(PaginationEntity param);
 
         // Update
         Task<bool> UpdateAsync(TransactionDto entity);

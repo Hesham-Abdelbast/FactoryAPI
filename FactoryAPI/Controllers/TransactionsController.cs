@@ -1,6 +1,7 @@
 ﻿using Application.Interface;
 using AppModels.Common;
 using AppModels.Models;
+using Ejd.GRC.AppModels.Common;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FactoryAPI.Controllers
@@ -12,14 +13,14 @@ namespace FactoryAPI.Controllers
         // ============================================================
         // 📋 جلب كل المعاملات
         // ============================================================
-        [HttpGet]
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<TResponse<List<TransactionDto>>>> GetAll()
+        public async Task<ActionResult<TResponse<List<TransactionDto>>>> GetAll(PaginationEntity param)
         {
             try
             {
-                var result = await services.GetAllAsync();
+                var result = await services.GetAllAsync(param);
                 return Ok(new TResponse<List<TransactionDto>>()
                 {
                     Success = true,

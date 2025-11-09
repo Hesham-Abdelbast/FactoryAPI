@@ -3,58 +3,112 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AppModels.Models
 {
+    /// <summary>
+    /// Data Transfer Object representing a material transaction between the factory and a merchant.
+    /// </summary>
     public sealed class TransactionDto
     {
-        public Guid? Id { get; set; }
         /// <summary>
-        /// Type of transaction (Income/Outcome)
+        /// Unique identifier for the transaction.
         /// </summary>
-        [Required]
-        public int Type { get; set; }
+        public Guid Id { get; set; }
 
+        /// <summary>
+        /// External system reference or custom code for the transaction.
+        /// </summary>
         public string TransactionIdentifier { get; set; }
 
         /// <summary>
-        /// Foreign key for the material type involved in the transaction
+        /// Type of transaction (Income / Outcome).
         /// </summary>
-        [Required]
+        public TransactionType Type { get; set; }
+
+        /// <summary>
+        /// ID of the material type used in the transaction.
+        /// </summary>
         public Guid MaterialTypeId { get; set; }
 
         /// <summary>
-        /// Quantity of material in the transaction
+        /// Name of the material type (from navigation).
         /// </summary>
-        [Required]
-        [Range(0.01, double.MaxValue)]
+        public string? MaterialTypeName { get; set; }
+
+        #region truck
+        /// <summary>
+        /// Name of the car driver delivering the material.
+        /// </summary>
+        public string? CarDriverName { get; set; }
+        /// <summary>
+        /// Total weight of the truck and material.
+        /// </summary>
+        public decimal CarAndMatrerialWeight { get; set; }
+
+        /// <summary>
+        /// Weight of the empty truck.
+        /// </summary>
+        public decimal CarWeight { get; set; }
+
+        /// <summary>
+        /// Actual material quantity being received or sold.
+        /// </summary>
         public decimal Quantity { get; set; }
 
         /// <summary>
-        /// Price per unit of the material
+        /// Percentage of impurities in the material.
         /// </summary>
-        [Required]
-        [Range(0.01, double.MaxValue)]
+        public decimal PercentageOfImpurities { get; set; }
+
+        /// <summary>
+        /// Total weight of impurities removed from the material.
+        /// </summary>
+        public decimal WeightOfImpurities { get; set; }
+
+        /// <summary>
+        /// Price per unit of material.
+        /// </summary>
+        #endregion
+
         public decimal PricePerUnit { get; set; }
 
         /// <summary>
-        /// Total amount of the transaction (calculated property)
+        /// Total monetary value of the transaction.
         /// </summary>
-        public decimal TotalAmount => Quantity * PricePerUnit;
+        public decimal TotalAmount { get; set; }
 
         /// <summary>
-        /// Foreign key for the merchant involved in the transaction
+        /// ID of the merchant associated with the transaction.
         /// </summary>
-        [Required]
         public Guid MerchantId { get; set; }
 
         /// <summary>
-        /// Additional description or notes about the transaction
+        /// Name of the merchant (from navigation).
         /// </summary>
-        [StringLength(500)]
+        public string? MerchantName { get; set; }
+
+        /// <summary>
+        /// Additional notes or remarks about the transaction.
+        /// </summary>
         public string? Notes { get; set; }
 
         /// <summary>
-        /// Amount already paid to or by the merchant
+        /// Amount already paid for this transaction.
         /// </summary>
-        public decimal AmountPaid { get; set; } = 0;
+        public decimal AmountPaid { get; set; }
 
+        /// <summary>
+        /// Remaining amount still unpaid.
+        /// </summary>
+        public decimal RemainingAmount { get; set; }
+
+        /// <summary>
+        /// Indicates whether the transaction is fully paid.
+        /// </summary>
+        public bool IsFullyPaid { get; set; }
+
+        /// <summary>
+        /// Timestamp for when the transaction was created.
+        /// </summary>
+        public DateTime CreateDate { get; set; }
     }
+
 }

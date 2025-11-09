@@ -16,7 +16,7 @@ namespace DAL
         public IStoreInventoryRepository StoreInventory { get; set; }
         public IMerchantRepository Merchant { get; set; }
         public IMaterialTypeRepository MaterialType { get; set; }
-
+        public IWarehouseRepositery Warehouse { get; set; }
         public IContactRepository Contact { get; set; }
 
         #endregion

@@ -28,10 +28,14 @@ namespace Application
                 .ReverseMap();
 
             _ = CreateMap<TransactionDto, Transaction>()
-               .ReverseMap();
+               .ReverseMap()
+               .ForMember(dest => dest.MaterialTypeName, opt => opt.MapFrom(x => x.MaterialType.Name))
+               .ForMember(dest => dest.MerchantName, opt => opt.MapFrom(x => x.Merchant.Name));
 
             _ = CreateMap<Contact, ContactDto>()
                .ReverseMap();
+
+            CreateMap<Warehouse, WarehouseDto>().ReverseMap();
             #endregion
 
         }
