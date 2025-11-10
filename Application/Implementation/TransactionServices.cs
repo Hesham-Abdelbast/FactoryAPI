@@ -144,6 +144,7 @@ namespace Application.Implementation
         public async Task<IEnumerable<TransactionDto>> GetAllByMerchantIdAsync(Guid merchantId)
         {
             var entities = await _unitOfWork.Transaction.All.Where(tr => tr.MerchantId == merchantId).ToListAsync();
+            
             return _mapper.Map<IEnumerable<TransactionDto>>(entities);
         }
 
