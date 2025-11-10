@@ -1,4 +1,5 @@
-﻿using AppModels.Entities;
+﻿using AppModels.Common;
+using AppModels.Entities;
 using AppModels.Models;
 using AppModels.Models.Auth;
 using AppModels.Models.Transaction;
@@ -40,7 +41,8 @@ namespace Application
                .ReverseMap()
                .ForMember(dest => dest.MaterialTypeName, opt => opt.MapFrom(x => x.MaterialType.Name))
                .ForMember(dest => dest.MerchantName, opt => opt.MapFrom(x => x.Merchant.Name))
-               .ForMember(dest => dest.WarehouseName, opt => opt.MapFrom(x => x.Warehouse.Name));
+               .ForMember(dest => dest.WarehouseName, opt => opt.MapFrom(x => x.Warehouse.Name))
+               .ForMember(dest => dest.TypeNameAr, opt => opt.MapFrom(x => x.Type ==TransactionType.Income ? "وارد":"صادر"));
 
             _ = CreateMap<CreateTransactionDto, Transaction>()
                .ReverseMap();

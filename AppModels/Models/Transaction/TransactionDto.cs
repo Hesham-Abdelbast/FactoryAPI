@@ -22,6 +22,7 @@ namespace AppModels.Models.Transaction
         /// Type of transaction (Income / Outcome).
         /// </summary>
         public TransactionType Type { get; set; }
+        public string TypeNameAr { get; set; }
 
         /// <summary>
         /// ID of the material type used in the transaction.
@@ -111,6 +112,7 @@ namespace AppModels.Models.Transaction
         /// Timestamp for when the transaction was created.
         /// </summary>
         public DateTime CreateDate { get; set; }
+        public bool ShowPhoneNumber { get; set; }
     }
 
 }

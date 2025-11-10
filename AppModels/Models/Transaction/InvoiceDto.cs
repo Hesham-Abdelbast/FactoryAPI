@@ -94,7 +94,7 @@ namespace AppModels.Models.Transaction
         /// Timestamp for when the transaction was created.
         /// </summary>
         public DateTime CreateDate { get; set; }
-
+        public bool ShowPhoneNumber { get; set; } 
         public string CompanyName { get; set; } = string.Empty;
         public string CompanyAddress { get; set; } = string.Empty;
         public string CompanyPhone { get; set; } = string.Empty;

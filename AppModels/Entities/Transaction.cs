@@ -115,5 +115,7 @@ namespace AppModels.Entities
         /// Indicates whether the transaction is fully paid
         /// </summary>
         public bool IsFullyPaid => RemainingAmount <= 0;
+
+        public bool ShowPhoneNumber { get; set; } = false;
     }
 }

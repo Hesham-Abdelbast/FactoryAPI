@@ -141,11 +141,22 @@ namespace Application.Implementation
         // ============================================================
         // 📋 جلب كل المعاملات بناءً على معرف التاجر
         // ============================================================
-        public async Task<IEnumerable<TransactionDto>> GetAllByMerchantIdAsync(Guid merchantId)
+        public async Task<AllTransByMerchantDto> GetAllByMerchantIdAsync(Guid merchantId)
         {
-            var entities = await _unitOfWork.Transaction.All.Where(tr => tr.MerchantId == merchantId).ToListAsync();
-            
-            return _mapper.Map<IEnumerable<TransactionDto>>(entities);
+            var entities = await _unitOfWork.Transaction.All
+                .Where(tr => tr.MerchantId == merchantId)
+                .Include(x=>x.MaterialType)
+                .Include(x => x.Merchant)
+                .Include(x => x.Warehouse)
+                .ToListAsync();
+            var resulat = new AllTransByMerchantDto
+            {
+                Transactions = _mapper.Map<List<TransactionDto>>(entities),
+                TotalMoneyProcessed = entities.Sum(e => e.TotalAmount),
+                TotalMoneypay = entities.Sum(e => e.AmountPaid),
+                TotalWight = entities.Sum(e => e.Quantity)
+            };
+            return resulat;
         }
 
         // ============================================================
@@ -197,6 +208,7 @@ namespace Application.Implementation
                 RemainingAmount = entity.RemainingAmount,
                 IsFullyPaid = entity.IsFullyPaid,
                 CreateDate = entity.CreateDate,
+                ShowPhoneNumber = entity.ShowPhoneNumber,
 
                 CompanyName = companyInfo?.CompanyName ?? "شركه الكواكب",
                 CompanyAddress = companyInfo?.Address ?? "",

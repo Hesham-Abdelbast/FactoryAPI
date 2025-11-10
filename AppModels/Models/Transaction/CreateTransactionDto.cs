@@ -75,5 +75,9 @@ namespace AppModels.Models.Transaction
         /// Amount already paid for this transaction.
         /// </summary>
         public decimal AmountPaid { get; set; }
+
+        public bool? ShowPhoneNumber { get; set; }
+
+        public DateTime? CreateDate { get; set; }
     }
 }

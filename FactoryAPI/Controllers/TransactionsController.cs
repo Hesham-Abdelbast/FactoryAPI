@@ -45,22 +45,22 @@ namespace FactoryAPI.Controllers
         [HttpGet("{id:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<TResponse<List<TransactionDto>>>> GetAllByMerchantId(Guid id)
+        public async Task<ActionResult<TResponse<AllTransByMerchantDto>>> GetAllByMerchantId(Guid id)
         {
             try
             {
                 var result = await services.GetAllByMerchantIdAsync(id);
-                return Ok(new TResponse<List<TransactionDto>>()
+                return Ok(new TResponse<AllTransByMerchantDto>()
                 {
                     Success = true,
-                    Data = result.ToList(),
+                    Data = result,
                     ReturnMsg = "تم جلب جميع المعاملات بنجاح."
                 });
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, $"{GetType().Name}.{nameof(GetAllByMerchantId)}");
-                return Ok(new TResponse<List<TransactionDto>>
+                return Ok(new TResponse<AllTransByMerchantDto>
                 {
                     Success = false,
                     ReturnMsg = "حدث خطأ أثناء جلب المعاملات: " + ex.Message
