@@ -55,7 +55,7 @@ namespace AppModels.Entities
         /// weight of Car in the transaction
         /// </summary>
         [Required]
-        [Range(0.01, double.MaxValue)]
+        [Range(0.0, double.MaxValue)]
         public decimal CarWeight { get; set; }
 
         /// <summary>
