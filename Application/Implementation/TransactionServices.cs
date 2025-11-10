@@ -154,6 +154,7 @@ namespace Application.Implementation
                 Transactions = _mapper.Map<List<TransactionDto>>(entities),
                 TotalMoneyProcessed = entities.Sum(e => e.TotalAmount),
                 TotalMoneypay = entities.Sum(e => e.AmountPaid),
+                TotalImpurities = entities.Sum(e => e.WeightOfImpurities),
                 TotalWight = entities.Sum(e => e.Quantity)
             };
             return resulat;
