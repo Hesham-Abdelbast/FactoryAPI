@@ -66,7 +66,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Contact");
+                    b.ToTable("Contact", (string)null);
                 });
 
             modelBuilder.Entity("AppModels.Entities.MaterialType", b =>
@@ -104,7 +104,7 @@ namespace DAL.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("MaterialTypes");
+                    b.ToTable("MaterialTypes", (string)null);
                 });
 
             modelBuilder.Entity("AppModels.Entities.Merchant", b =>
@@ -149,7 +149,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Merchants");
+                    b.ToTable("Merchants", (string)null);
                 });
 
             modelBuilder.Entity("AppModels.Entities.StoreInventory", b =>
@@ -185,7 +185,7 @@ namespace DAL.Migrations
                     b.HasIndex("MaterialTypeId")
                         .IsUnique();
 
-                    b.ToTable("StoreInventories");
+                    b.ToTable("StoreInventories", (string)null);
                 });
 
             modelBuilder.Entity("AppModels.Entities.Transaction", b =>
@@ -267,7 +267,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("WarehouseId");
 
-                    b.ToTable("Transactions");
+                    b.ToTable("Transactions", (string)null);
                 });
 
             modelBuilder.Entity("AppModels.Entities.Warehouse", b =>
@@ -309,7 +309,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Warehouses");
+                    b.ToTable("Warehouses", (string)null);
                 });
 
             modelBuilder.Entity("AppModels.Entities.WarehouseInventory", b =>
@@ -352,7 +352,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("WarehouseId");
 
-                    b.ToTable("WarehouseInventory");
+                    b.ToTable("WarehouseInventory", (string)null);
                 });
 
             modelBuilder.Entity("DAL.ApplicationUser", b =>
