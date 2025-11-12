@@ -1,4 +1,4 @@
-﻿namespace AppModels.Models
+﻿namespace AppModels.Models.Warehouse
 {
     public sealed class WarehouseDto
     {

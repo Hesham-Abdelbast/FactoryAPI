@@ -3,6 +3,7 @@ using AppModels.Entities;
 using AppModels.Models;
 using AppModels.Models.Auth;
 using AppModels.Models.Transaction;
+using AppModels.Models.Warehouse;
 using AutoMapper;
 using DAL;
 using Microsoft.IdentityModel.Tokens;
@@ -46,6 +47,11 @@ namespace Application
 
             _ = CreateMap<CreateTransactionDto, Transaction>()
                .ReverseMap();
+
+            _ = CreateMap<WarehouseInventoryDto, WarehouseInventory>()
+                .ReverseMap()
+                .ForMember(dest => dest.MaterialTypeName, opt => opt.MapFrom(x => x.MaterialType.Name))
+                .ForMember(dest => dest.WarehouseName, opt => opt.MapFrom(x => x.Warehouse.Name));
 
             #endregion
 

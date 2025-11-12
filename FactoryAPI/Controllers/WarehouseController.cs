@@ -1,6 +1,6 @@
 ﻿using Application.Interface;
 using AppModels.Common;
-using AppModels.Models;
+using AppModels.Models.Warehouse;
 using Ejd.GRC.AppModels.Common;
 using Microsoft.AspNetCore.Mvc;
 
@@ -67,7 +67,31 @@ namespace FactoryAPI.Controllers
             }
         }
 
-
+        [HttpGet("{warehouseId:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<TResponse<List<WarehouseInventoryDto>>>> GetStoreByWarehouseId(Guid warehouseId)
+        {
+            try
+            {
+                var result = await services.GetStoreByWarehouseId(warehouseId);
+                return Ok(new TResponse<List<WarehouseInventoryDto>>
+                {
+                    Success = true,
+                    ReturnMsg = "تم جلب جميع المواد من المخازن بنجاح.",
+                    Data = result.ToList(),
+                    TotalCount = result.Count()
+                });
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"{GetType().Name}.{nameof(GetStoreByWarehouseId)}");
+                return Ok(new TResponse<List<WarehouseInventoryDto>>
+                {
+                    Success = false,
+                    ReturnMsg = "حدث خطأ أثناء جلب المواد من المخازن: " + ex.Message
+                });
+            }
+        }
         // ============================================================
         // 🔎 جلب مخزن حسب رقم المعرف
         // ============================================================
