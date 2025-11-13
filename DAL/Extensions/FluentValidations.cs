@@ -13,8 +13,8 @@ namespace DAL.Extensions
             modelBuilder.Entity<Transaction>().HasQueryFilter(e => !e.IsDeleted);
             modelBuilder.Entity<StoreInventory>().HasQueryFilter(e => !e.IsDeleted);
             modelBuilder.Entity<Contact>().HasQueryFilter(e => !e.IsDeleted);
-            //modelBuilder.Entity<Warehouse>().HasQueryFilter(e => !e.IsDeleted);
-
+            modelBuilder.Entity<Warehouse>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<WarehouseInventory>().HasQueryFilter(e => !e.IsDeleted);
 
 
             // Configure unique constraints

@@ -13,6 +13,6 @@ namespace AppModels.Entities
         /// <summary>
         /// Optional notes or description.
         /// </summary>
-        public string Notes { get; set; }
+        public string? Notes { get; set; }
     }
 }

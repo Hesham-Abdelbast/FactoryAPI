@@ -1,6 +1,7 @@
 ﻿using Application.Interface;
 using AppModels.Common;
 using AppModels.Entities;
+using AppModels.Models.Search;
 using AppModels.Models.Transaction;
 using AutoMapper;
 using DAL;
@@ -18,6 +19,62 @@ namespace Application.Implementation
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+        }
+
+        // ============================================================
+        // البحث عن معاملة
+        // ============================================================
+        public async Task<IEnumerable<TransactionDto?>> SearchAsync(TxnSearchDto searchDto)
+        {
+            if (searchDto == null)
+                throw new ArgumentNullException(nameof(searchDto), "معايير البحث لا يمكن أن تكون فارغة.");
+
+            // Base query with includes
+            var query = _unitOfWork.Transaction
+                .All
+                .Include(x => x.MaterialType)
+                .Include(x => x.Merchant)
+                .Include(x => x.Warehouse)
+                .AsQueryable();
+
+            // ===============================
+            // 🔍 Apply dynamic filters
+            // ===============================
+
+            if (!string.IsNullOrWhiteSpace(searchDto.MerchantName))
+                query = query.Where(x => x.Merchant != null && x.Merchant.Name.Contains(searchDto.MerchantName));
+
+            if (!string.IsNullOrWhiteSpace(searchDto.MaterialTypeName))
+                query = query.Where(x => x.MaterialType != null && x.MaterialType.Name.Contains(searchDto.MaterialTypeName));
+
+            if (!string.IsNullOrWhiteSpace(searchDto.WarehouseName))
+                query = query.Where(x => x.Warehouse != null && x.Warehouse.Name.Contains(searchDto.WarehouseName));
+
+            if (searchDto.FromDate.HasValue)
+                query = query.Where(x => x.CreateDate >= searchDto.FromDate.Value);
+
+            if (searchDto.ToDate.HasValue)
+                query = query.Where(x => x.CreateDate <= searchDto.ToDate.Value);
+
+            // ===============================
+            // 📄 Pagination
+            // ===============================
+            int skip = (searchDto.PageIndex - 1) * searchDto.PageSize;
+            query = query
+                .OrderByDescending(x => x.CreateDate) // Sort by latest transaction
+                .Skip(skip)
+                .Take(searchDto.PageSize);
+
+            // ===============================
+            // 🔁 Map to DTOs
+            // ===============================
+            var result = await query
+                .AsNoTracking()
+                .ToListAsync();
+
+            var mapped = _mapper.Map<IEnumerable<TransactionDto>>(result);
+
+            return mapped;
         }
 
         // ============================================================
@@ -218,6 +275,11 @@ namespace Application.Implementation
 
             return invoiceDto;
         }
+
+
+        #region Private Methods
+
+
         // ============================================================
         // 🔧 تعديل المخزون بعد إضافة معاملة جديدة
         // ============================================================
@@ -350,6 +412,7 @@ namespace Application.Implementation
             _unitOfWork.WarehouseInventory.Update(inventory);
             await _unitOfWork.SaveChangesAsync();
         }
+        #endregion
 
     }
 }

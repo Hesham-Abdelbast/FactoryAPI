@@ -30,6 +30,7 @@ namespace Application
             services.AddScoped<ITransactionServices, TransactionServices>();
             services.AddScoped<IContactServices, ContactServices>();
             services.AddScoped<IWarehouseServices,WarehouseServices>();
+            services.AddScoped<IWarehouseInventoryServices, WarehouseInventoryServices>();
 
 
             return services;

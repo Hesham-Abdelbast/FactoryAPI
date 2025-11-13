@@ -1,5 +1,7 @@
-﻿using Application.Interface;
+﻿using Application.Implementation;
+using Application.Interface;
 using AppModels.Common;
+using AppModels.Models.Search;
 using AppModels.Models.Transaction;
 using Ejd.GRC.AppModels.Common;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +12,51 @@ namespace FactoryAPI.Controllers
     [Route("api/[controller]/[Action]")]
     public class TransactionsController(ITransactionServices services, ILogger<TransactionsController> logger) : ControllerBase
     {
+
+        // ============================================================
+        // 📋 البحث في كل المعاملات
+        // ============================================================
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<TResponse<List<TransactionDto>>>> Search(TxnSearchDto searchDto)
+        {
+            try
+            {
+                if (searchDto == null)
+                {
+                    return Ok(new TResponse<List<TransactionDto>>
+                    {
+                        Success = false,
+                        ReturnMsg = "معايير البحث لا يمكن أن تكون فارغة."
+                    });
+                }
+
+                var result = await services.SearchAsync(searchDto);
+                var dataList = result.ToList();
+
+                return Ok(new TResponse<List<TransactionDto>>
+                {
+                    Success = true,
+                    ReturnMsg = dataList.Any()
+                        ? "تم جلب نتائج البحث بنجاح."
+                        : "لم يتم العثور على نتائج مطابقة لمعايير البحث.",
+                    Data = dataList,
+                    TotalCount = dataList?.Count??0
+                });
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"{GetType().Name}.{nameof(Search)}");
+
+                return Ok(new TResponse<List<TransactionDto>>
+                {
+                    Success = false,
+                    ReturnMsg = "حدث خطأ أثناء تنفيذ عملية البحث: " + ex.Message
+                });
+            }
+        }
+
+
         // ============================================================
         // 📋 جلب كل المعاملات
         // ============================================================

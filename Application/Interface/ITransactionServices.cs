@@ -1,4 +1,5 @@
-﻿using AppModels.Models.Transaction;
+﻿using AppModels.Models.Search;
+using AppModels.Models.Transaction;
 using Ejd.GRC.AppModels.Common;
 
 namespace Application.Interface
@@ -7,7 +8,7 @@ namespace Application.Interface
     {
         // Create
         Task<Guid> AddAsync(CreateTransactionDto entity);
-
+        Task<IEnumerable<TransactionDto?>> SearchAsync(TxnSearchDto searchDto);
         Task<AllTransByMerchantDto> GetAllByMerchantIdAsync(Guid merchantId);
 
         // Read (Get by Id)

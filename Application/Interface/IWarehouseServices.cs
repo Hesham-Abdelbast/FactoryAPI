@@ -14,7 +14,6 @@ namespace Application.Interface
         // Read (Get all)
         Task<IEnumerable<WarehouseDto>> GetAllAsync(PaginationEntity param);
         Task<IEnumerable<WarehouseDto>> GetAllAsync();
-        Task<IEnumerable<WarehouseInventoryDto>> GetStoreByWarehouseId(Guid warehouseId);
         // Update
         Task<bool> UpdateAsync(WarehouseDto entity);
 

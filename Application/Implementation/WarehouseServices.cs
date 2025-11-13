@@ -45,15 +45,7 @@ namespace Application.Implementation
             return data;
         }
 
-        public async Task<IEnumerable<WarehouseInventoryDto>> GetStoreByWarehouseId(Guid warehouseId)
-        {
-            var items = await _unitOfWork.WarehouseInventory
-                .FindByIncluding(x=>x.WarehouseId == warehouseId,inc => inc.MaterialType)
-                .Include(inc => inc.Warehouse)
-                .ToListAsync();
-
-            return _mapper.Map<IEnumerable<WarehouseInventoryDto>>(items);
-        }
+       
         // ============================================================
         // 🔎 جلب مخزن حسب رقم المعرف
         // ============================================================
