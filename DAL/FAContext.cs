@@ -1,5 +1,9 @@
 ﻿using AppModels.Common;
 using AppModels.Entities;
+using AppModels.Entities.Employees;
+using AppModels.Entities.Equipments;
+using AppModels.Entities.MerchantMangement;
+using AppModels.Entities.Store;
 using DAL.Extensions;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -33,15 +37,17 @@ namespace DAL
         /// </summary>
         public DbSet<Transaction> Transactions { get; set; }
 
-        /// <summary>
-        /// DbSet for store inventory
-        /// </summary>
-        public DbSet<StoreInventory> StoreInventories { get; set; }
 
         /// <summary>
         /// DbSet for warehouses
         /// </summary>
         public DbSet<Warehouse> Warehouses { get; set; }
+
+        public DbSet<Employee> Employees { get; set; }
+        public DbSet<Equipment> Equipments { get; set; }
+        public DbSet<Financing> Financing { get; set; }
+
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

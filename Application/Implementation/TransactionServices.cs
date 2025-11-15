@@ -1,6 +1,7 @@
 ﻿using Application.Interface;
 using AppModels.Common;
 using AppModels.Entities;
+using AppModels.Entities.Store;
 using AppModels.Models.Search;
 using AppModels.Models.Transaction;
 using AutoMapper;

@@ -1,4 +1,4 @@
-﻿using AppModels.Entities;
+﻿using AppModels.Entities.Store;
 
 namespace DAL.Interface
 {

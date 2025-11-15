@@ -1,6 +1,13 @@
 ﻿using DAL;
 using DAL.Implementation;
+using DAL.Implementation.Employees;
+using DAL.Implementation.Equipments;
+using DAL.Implementation.MerchantMangement;
+using DAL.Implementation.Store;
 using DAL.Interface;
+using DAL.Interface.Employees;
+using DAL.Interface.Equipments;
+using DAL.Interface.MerchantMangement;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -163,11 +170,26 @@ namespace Application
 
             services.AddScoped<ITransactionRepository, TransactionRepository>();
             services.AddScoped<IMaterialTypeRepository, MaterialTypeRepository>();
-            services.AddScoped<IStoreInventoryRepository, StoreInventoryRepository>();
-            services.AddScoped<IMerchantRepository, MerchantRepository>();
             services.AddScoped<IContactRepository, ContactRepository>();
+
+            services.AddScoped<IMerchantRepository, MerchantRepository>();
+            services.AddScoped<IMerchantExpenseRepository, MerchantExpenseRepository>();
+
             services.AddScoped<IWarehouseRepositery, WarehouseRepositery>();
             services.AddScoped<IWarehouseInventoryRepo, WarehouseInventoryRepo>();
+            services.AddScoped<IWarehouseExpenseRepository, WarehouseExpenseRepository>();
+
+            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<IEmployeeCashAdvanceRepository, EmployeeCashAdvanceRepository>();
+            services.AddScoped<IEmployeeMonthlyPayrollRepository, EmployeeMonthlyPayrollRepository>();
+            services.AddScoped<IEmployeePersonalExpenseRepository, EmployeePersonalExpenseRepository>()
+                ;
+            services.AddScoped<IEquipmentRepository, EquipmentRepository>();
+            services.AddScoped<IEquipmentExpenseRepository, EquipmentExpenseRepository>();
+            services.AddScoped<IEquipmentIncomeRepository, EquipmentIncomeRepository>();
+
+            services.AddScoped<IFinancingRepository, FinancingRepository>();
+            services.AddScoped<IMerchantExpenseRepository, MerchantExpenseRepository>();
             return services;
         }
     }

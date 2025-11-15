@@ -14,9 +14,6 @@ namespace AppModels.Entities
         public decimal TotalPaid { get; set; }
 
 
-
-
-
         public string? Notes { get; set; }
 
     }

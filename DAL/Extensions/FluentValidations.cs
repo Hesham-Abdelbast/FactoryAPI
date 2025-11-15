@@ -1,4 +1,8 @@
 ﻿using AppModels.Entities;
+using AppModels.Entities.Employees;
+using AppModels.Entities.Equipments;
+using AppModels.Entities.MerchantMangement;
+using AppModels.Entities.Store;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Extensions
@@ -9,12 +13,26 @@ namespace DAL.Extensions
         {
             // Apply global query filters for soft delete
             modelBuilder.Entity<Merchant>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<MerchantExpense>().HasQueryFilter(e => !e.IsDeleted);
+
             modelBuilder.Entity<MaterialType>().HasQueryFilter(e => !e.IsDeleted);
             modelBuilder.Entity<Transaction>().HasQueryFilter(e => !e.IsDeleted);
-            modelBuilder.Entity<StoreInventory>().HasQueryFilter(e => !e.IsDeleted);
             modelBuilder.Entity<Contact>().HasQueryFilter(e => !e.IsDeleted);
+
             modelBuilder.Entity<Warehouse>().HasQueryFilter(e => !e.IsDeleted);
             modelBuilder.Entity<WarehouseInventory>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<WarehouseExpense>().HasQueryFilter(e => !e.IsDeleted);
+
+            modelBuilder.Entity<Employee>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<EmployeeMonthlyPayroll>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<EmployeePersonalExpense>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<EmployeeCashAdvance>().HasQueryFilter(e => !e.IsDeleted);
+
+            modelBuilder.Entity<Equipment>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<EquipmentExpense>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<EquipmentIncome>().HasQueryFilter(e => !e.IsDeleted);
+
+            modelBuilder.Entity<Financing>().HasQueryFilter(e => !e.IsDeleted);
 
 
             // Configure unique constraints
@@ -22,9 +40,7 @@ namespace DAL.Extensions
                 .HasIndex(m => m.Name)
                 .IsUnique();
 
-            modelBuilder.Entity<StoreInventory>()
-                .HasIndex(s => s.MaterialTypeId)
-                .IsUnique();
+           
 
             // Configure relationships
             modelBuilder.Entity<Transaction>()
@@ -48,15 +64,6 @@ namespace DAL.Extensions
             modelBuilder.Entity<Transaction>()
                 .Property(t => t.PricePerUnit)
                 .HasPrecision(18, 2);
-
-            modelBuilder.Entity<StoreInventory>()
-                .Property(s => s.CurrentQuantity)
-                .HasPrecision(18, 2);
-
-            modelBuilder.Entity<StoreInventory>()
-                .HasOne(s => s.MaterialType)
-                .WithOne(m => m.StoreInventory)
-                .HasForeignKey<StoreInventory>(s => s.MaterialTypeId);
 
             modelBuilder.Entity<Transaction>()
                 .HasOne(t => t.Warehouse)

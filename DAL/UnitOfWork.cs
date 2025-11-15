@@ -1,4 +1,7 @@
 ﻿using DAL.Interface;
+using DAL.Interface.Employees;
+using DAL.Interface.Equipments;
+using DAL.Interface.MerchantMangement;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 
@@ -14,30 +17,66 @@ namespace DAL
         public IMaterialTypeRepository MaterialType { get; set; }
         public IMerchantRepository Merchant { get; set; }
         public ITransactionRepository Transaction { get; set; }
-        public IStoreInventoryRepository StoreInventory { get; set; }
         public IContactRepository Contact { get; set; }
+
         public IWarehouseRepositery Warehouse { get; set; }
         public IWarehouseInventoryRepo WarehouseInventory { get; set; }
+        public IWarehouseExpenseRepository WarehouseExpense { get; set; }
+
+        public IEmployeeRepository Employees { get; set; }
+        public IEmployeeCashAdvanceRepository EmployeeCashAdvance { get; set; }
+        public IEmployeeMonthlyPayrollRepository EmployeeMonthlyPayroll { get; set; }
+        public IEmployeePersonalExpenseRepository EmployeePersonalExpense { get; set; }
+
+        public IEquipmentRepository Equipments { get; set; }
+        public IEquipmentExpenseRepository EquipmentExpense { get; set; }
+        public IEquipmentIncomeRepository EquipmentIncome { get; set; }
+
+        public IFinancingRepository Financing { get; set; }
+        public IMerchantExpenseRepository MerchantExpense { get; set; }
         public UnitOfWork(
             FAContext dbContext,
             ILogger<UnitOfWork> logger,
             IMaterialTypeRepository materialType,
             IMerchantRepository merchant,
-            IStoreInventoryRepository storeInventory,
             ITransactionRepository transaction,
             IContactRepository contact,
             IWarehouseRepositery warehouse,
-            IWarehouseInventoryRepo warehouseInventory)
+            IWarehouseInventoryRepo warehouseInventory,
+            IWarehouseExpenseRepository warehouseExpense,
+
+            IEmployeeRepository employeeRepository,
+            IEmployeeCashAdvanceRepository employeeCashAdvanceRepository,
+            IEmployeeMonthlyPayrollRepository employeeMonthlyPayrollRepository,
+            IEmployeePersonalExpenseRepository employeePersonalExpenseRepository,
+
+            IEquipmentRepository equipmentRepository,
+            IEquipmentExpenseRepository equipmentExpenseRepository,
+            IEquipmentIncomeRepository equipmentIncomeRepository,
+            IFinancingRepository financing,
+            IMerchantExpenseRepository merchantExpenseRepository)
         {
             _dbContext = dbContext;
             _logger = logger;
             Merchant = merchant;
             MaterialType = materialType;
-            StoreInventory = storeInventory;
             Transaction = transaction;
             Contact = contact;
+
             Warehouse = warehouse;
+            WarehouseExpense = warehouseExpense;
             WarehouseInventory = warehouseInventory;
+
+            Employees = employeeRepository;
+            EmployeeCashAdvance = employeeCashAdvanceRepository;
+            EmployeeMonthlyPayroll = employeeMonthlyPayrollRepository;
+            EmployeePersonalExpense = employeePersonalExpenseRepository;
+
+            Equipments = equipmentRepository;
+            EquipmentExpense = equipmentExpenseRepository;
+            EquipmentIncome = equipmentIncomeRepository;
+            Financing = financing;
+            MerchantExpense = merchantExpenseRepository;
         }
 
         public void Dispose()

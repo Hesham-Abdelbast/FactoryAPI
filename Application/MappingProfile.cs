@@ -1,12 +1,18 @@
 ﻿using AppModels.Common;
 using AppModels.Entities;
+using AppModels.Entities.Employees;
+using AppModels.Entities.Equipments;
+using AppModels.Entities.MerchantMangement;
+using AppModels.Entities.Store;
 using AppModels.Models;
 using AppModels.Models.Auth;
+using AppModels.Models.Employees;
+using AppModels.Models.Equipments;
+using AppModels.Models.MerchantMangement;
+using AppModels.Models.Store;
 using AppModels.Models.Transaction;
-using AppModels.Models.Warehouse;
 using AutoMapper;
 using DAL;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Application
 {
@@ -30,7 +36,11 @@ namespace Application
             _ = CreateMap<MerchantDto, Merchant>()
                 .ReverseMap();
 
-            
+            _ = CreateMap<MerchantExpenseDto, MerchantExpense>()
+                .ReverseMap();
+
+            _ = CreateMap<MerchantExpenseCreateDto, MerchantExpense>()
+                .ReverseMap();
 
             _ = CreateMap<Contact, ContactDto>()
                .ReverseMap();
@@ -52,6 +62,29 @@ namespace Application
                 .ReverseMap()
                 .ForMember(dest => dest.MaterialTypeName, opt => opt.MapFrom(x => x.MaterialType.Name))
                 .ForMember(dest => dest.WarehouseName, opt => opt.MapFrom(x => x.Warehouse.Name));
+
+            _ = CreateMap<WarehouseExpenseDto, WarehouseExpense>()
+                .ReverseMap()
+                .ForMember(dest => dest.WarehouseName, opt => opt.MapFrom(x => x.Warehouse.Name));
+
+            _ = CreateMap<Employee, EmployeeDto>().ReverseMap();
+
+            _ = CreateMap<EmployeePersonalExpense, EmployeePersonalExpenseDto>().ReverseMap();
+
+            _ = CreateMap<EmployeeCashAdvance, EmployeeCashAdvanceDto>().ReverseMap();
+
+            _ = CreateMap<EmployeeMonthlyPayroll, EmployeeMonthlyPayrollDto>().ReverseMap();
+
+
+            _ = CreateMap<EquipmentIncomeDto, EquipmentIncome>().ReverseMap()
+                .ForMember(dest => dest.EquipmentName, opt => opt.MapFrom(x => x.Equipment.Name));
+
+            _ = CreateMap<EquipmentExpenseDto, EquipmentExpense>().ReverseMap()
+                .ForMember(dest => dest.EquipmentName, opt => opt.MapFrom(x => x.Equipment.Name));
+
+            _ = CreateMap<EquipmentDto, Equipment>().ReverseMap();
+
+            _ = CreateMap<FinancingDto, Financing>().ReverseMap();
 
             #endregion
 

@@ -1,4 +1,6 @@
 ﻿using AppModels.Common;
+using AppModels.Entities.MerchantMangement;
+using AppModels.Entities.Store;
 using System.ComponentModel.DataAnnotations;
 
 namespace AppModels.Entities

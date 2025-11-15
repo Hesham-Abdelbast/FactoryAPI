@@ -1,7 +1,17 @@
 ﻿using Application.Implementation;
 using Application.Implementation.Auth;
+using Application.Implementation.Employees;
+using Application.Implementation.Equipments;
+using Application.Implementation.MerchantMangement;
+using Application.Implementation.Store;
 using Application.Interface;
 using Application.Interface.Auth;
+using Application.Interface.Employees;
+using Application.Interface.Equipments;
+using Application.Interface.MerchantMangement;
+using Application.Interface.Store;
+using Application.Services;
+using AppModels.Entities.Store;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application
@@ -24,14 +34,19 @@ namespace Application
 
             services.AddScoped<IFileServices, FileServices>();
 
-            services.AddScoped<IMaterialTypeServices, MaterialTypeServices>();
-            services.AddScoped<IStoreInventoryServices, StoreInventoryServices>();
             services.AddScoped<IMerchantServices, MerchantServices>();
+            services.AddScoped<IMerchantExpenseService, MerchantExpenseService>();
+
+            services.AddScoped<IMaterialTypeServices, MaterialTypeServices>();
             services.AddScoped<ITransactionServices, TransactionServices>();
             services.AddScoped<IContactServices, ContactServices>();
             services.AddScoped<IWarehouseServices,WarehouseServices>();
+            services.AddScoped<IWarehouseExpenseServices, WarehouseExpenseServices>();
             services.AddScoped<IWarehouseInventoryServices, WarehouseInventoryServices>();
 
+            services.AddScoped<IFinancingService, FinancingService>();
+            services.AddScoped<IEmployeeManagementService,EmployeeManagementService>();
+            services.AddScoped<IEquipmentManagementService,EquipmentManagementService>();
 
             return services;
         }

@@ -26,9 +26,6 @@ namespace AppModels.Entities
         /// </summary>
         public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
 
-        /// <summary>
-        /// Navigation property for store inventory of this material type
-        /// </summary>
-        public StoreInventory StoreInventory { get; set; }
+       
     }
 }

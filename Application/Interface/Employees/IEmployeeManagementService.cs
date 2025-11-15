@@ -1,0 +1,48 @@
+﻿using AppModels.Models.Employees;
+using Ejd.GRC.AppModels.Common;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Application.Interface.Employees
+{
+    /// <summary>
+    /// Service responsible for managing all employee-related operations including:
+    /// - Employee CRUD
+    /// - Cash advances
+    /// - Personal expenses
+    /// - Monthly payroll calculation
+    /// - Employee financial reports
+    /// </summary>
+    public interface IEmployeeManagementService
+    {
+        // Employee CRUD
+
+        Task<Guid> AddEmployeeAsync(EmployeeDto dto);
+        Task<bool> UpdateEmployeeAsync(EmployeeDto dto);
+        Task<bool> DeleteEmployeeAsync(Guid id);
+        Task<EmployeeDto?> GetEmployeeByIdAsync(Guid id);
+        Task<IEnumerable<EmployeeDto>> GetAllEmployeesAsync();
+        Task<IEnumerable<EmployeeDto>> GetAllEmployeesAsync(PaginationEntity param);
+
+        // Cash advance operations
+        Task<Guid> AddCashAdvanceAsync(EmployeeCashAdvanceDto dto);
+        Task<bool> DeleteCashAdvanceAsync(Guid id);
+        Task<IEnumerable<EmployeeCashAdvanceDto>> GetCashAdvancesAsync(Guid employeeId);
+
+        // Personal expense operations
+        Task<Guid> AddPersonalExpenseAsync(EmployeePersonalExpenseDto dto);
+        Task<bool> DeletePersonalExpenseAsync(Guid id);
+        Task<IEnumerable<EmployeePersonalExpenseDto>> GetPersonalExpensesAsync(Guid employeeId);
+
+        // Payroll operations
+        Task<Guid> GeneratePayrollAsync(Guid employeeId, int year, int month);
+        Task<EmployeeMonthlyPayrollDto?> GetPayrollAsync(Guid employeeId, int year, int month);
+        Task<IEnumerable<EmployeeMonthlyPayrollDto>> GetPayrollHistoryAsync(Guid employeeId);
+
+        // Reporting
+        Task<EmployeeFinancialReportDto> GetEmployeeFinancialSummaryAsync(Guid employeeId, DateTime? from = null, DateTime? to = null);
+    }
+}
