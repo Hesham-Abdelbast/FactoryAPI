@@ -85,6 +85,7 @@ namespace Application
             _ = CreateMap<EquipmentDto, Equipment>().ReverseMap();
 
             _ = CreateMap<FinancingDto, Financing>().ReverseMap();
+            _ = CreateMap<FinancingCreateDto, Financing>().ReverseMap();
 
             #endregion
 
