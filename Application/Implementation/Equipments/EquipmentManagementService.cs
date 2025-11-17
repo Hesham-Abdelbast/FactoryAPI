@@ -73,7 +73,7 @@ namespace Application.Implementation.Equipments
                 throw new ArgumentNullException(nameof(param), "معايير البحث غير موجودة.");
 
             var query = _unit.Equipments.All
-                .OrderByDescending(e => e.CreateDate); 
+                .OrderByDescending(e => e.CreateDate);
 
             var items = await query
                 .Skip((param.PageIndex - 1) * param.PageSize)
@@ -159,15 +159,33 @@ namespace Application.Implementation.Equipments
                 return true;
             });
 
-        public async Task<IEnumerable<EquipmentExpenseDto>> GetEquipmentExpensesAsync(Guid equipmentId)
+        public async Task<IEnumerable<EquipmentExpenseDto>> GetEquipmentExpensesAsync(Guid equipmentId, PaginationEntity param)
         {
-            var list = await _unit.EquipmentExpense.All
-                .Where(x => x.EquipmentId == equipmentId )
+            var query = _unit.EquipmentExpense.All
+                .Where(x => x.EquipmentId == equipmentId && !x.IsDeleted)
                 .AsNoTracking()
+                .OrderByDescending(x => x.CreateDate);
+
+            var list = await query
+                .Skip((param.PageIndex - 1) * param.PageSize)
+                .Take(param.PageSize)
                 .ToListAsync();
 
             return _mapper.Map<IEnumerable<EquipmentExpenseDto>>(list);
         }
+
+        public async Task<bool> UpdateEquipmentExpenseAsync(EquipmentExpenseDto dto)
+                => await ExecuteTransactionAsync(async () =>
+                {
+                    var entity = await _unit.EquipmentExpense.FindAsync(dto.Id)
+                        ?? throw new Exception("⚠ مصروف المعدة غير موجود.");
+
+                    _mapper.Map(dto, entity);
+                    entity.UpdateDate = DateTime.UtcNow;
+
+                    _unit.EquipmentExpense.Update(entity);
+                    return true;
+                });
 
         #endregion
 
@@ -192,15 +210,36 @@ namespace Application.Implementation.Equipments
                 return true;
             });
 
-        public async Task<IEnumerable<EquipmentIncomeDto>> GetEquipmentIncomesAsync(Guid equipmentId)
+        public async Task<IEnumerable<EquipmentIncomeDto>> GetEquipmentIncomesAsync(Guid equipmentId, PaginationEntity param)
         {
-            var list = await _unit.EquipmentIncome.All
-                .Where(x => x.EquipmentId == equipmentId)
+            var query = _unit.EquipmentIncome.All
+                .Where(x => x.EquipmentId == equipmentId && !x.IsDeleted)
                 .AsNoTracking()
+                .OrderByDescending(x => x.CreateDate);
+
+            var list = await query
+                .Skip((param.PageIndex - 1) * param.PageSize)
+                .Take(param.PageSize)
                 .ToListAsync();
 
             return _mapper.Map<IEnumerable<EquipmentIncomeDto>>(list);
         }
+
+        public async Task<bool> UpdateEquipmentIncomeAsync(EquipmentIncomeDto dto)
+            => await ExecuteTransactionAsync(async () =>
+            {
+                var entity = await _unit.EquipmentIncome.FindAsync(dto.Id)
+                    ?? throw new Exception("⚠ دخل المعدة غير موجود.");
+
+                if (entity.IsDeleted)
+                    throw new Exception("⚠ لا يمكن تعديل سجل محذوف.");
+
+                _mapper.Map(dto, entity);
+                entity.UpdateDate = DateTime.UtcNow;
+
+                _unit.EquipmentIncome.Update(entity);
+                return true;
+            });
 
         #endregion
 

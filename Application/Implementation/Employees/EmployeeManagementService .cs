@@ -1,4 +1,5 @@
 ﻿using Application.Interface.Employees;
+using AppModels.Common;
 using AppModels.Entities.Employees;
 using AppModels.Models.Employees;
 using AutoMapper;
@@ -159,15 +160,42 @@ namespace Application.Implementation.Employees
                 return true;
             });
 
-        public async Task<IEnumerable<EmployeeCashAdvanceDto>> GetCashAdvancesAsync(Guid employeeId)
+        public async Task<PagedResult<EmployeeCashAdvanceDto>> GetCashAdvancesAsync(Guid employeeId, PaginationEntity param)
         {
-            var list = await _unit.EmployeeCashAdvance.All
-                .Where(x => x.EmployeeId == employeeId && !x.IsDeleted)
+            var query = _unit.EmployeeCashAdvance.All
+                .Where(x => x.EmployeeId == employeeId)
                 .AsNoTracking()
+                .OrderByDescending(x => x.CreateDate);
+
+            // Count BEFORE pagination
+            var totalCount = await query.CountAsync();
+
+            // Apply pagination
+            var list = await query
+                .Skip((param.PageIndex - 1) * param.PageSize)
+                .Take(param.PageSize)
                 .ToListAsync();
 
-            return _mapper.Map<IEnumerable<EmployeeCashAdvanceDto>>(list);
+            return new PagedResult<EmployeeCashAdvanceDto>
+            {
+                TotalCount = totalCount,
+                Data = _mapper.Map<IEnumerable<EmployeeCashAdvanceDto>>(list)
+            };
         }
+
+
+        public async Task<bool> UpdateEmployeeCashAdvanceAsync(EmployeeCashAdvanceDto dto)
+    => await ExecuteTransactionAsync(async () =>
+    {
+        var entity = await _unit.EmployeeCashAdvance.FindAsync(dto.Id)
+            ?? throw new Exception("⚠ السلفة غير موجودة.");
+
+        _mapper.Map(dto, entity);
+        entity.UpdateDate = DateTime.UtcNow;
+
+        _unit.EmployeeCashAdvance.Update(entity);
+        return true;
+    });
 
         #endregion
 
@@ -192,15 +220,38 @@ namespace Application.Implementation.Employees
                 return true;
             });
 
-        public async Task<IEnumerable<EmployeePersonalExpenseDto>> GetPersonalExpensesAsync(Guid employeeId)
+        public async Task<IEnumerable<EmployeePersonalExpenseDto>> GetPersonalExpensesAsync(Guid employeeId, PaginationEntity param)
         {
-            var list = await _unit.EmployeePersonalExpense.All
-                .Where(x => x.EmployeeId == employeeId && !x.IsDeleted)
+            var query = _unit.EmployeePersonalExpense.All
+                .Where(x => x.EmployeeId == employeeId)
                 .AsNoTracking()
+                .OrderByDescending(x => x.CreateDate);
+
+            var list = await query
+                .Skip((param.PageIndex - 1) * param.PageSize)
+                .Take(param.PageSize)
                 .ToListAsync();
 
             return _mapper.Map<IEnumerable<EmployeePersonalExpenseDto>>(list);
         }
+
+        public async Task<bool> UpdatePersonalExpenseAsync(EmployeePersonalExpenseDto dto)
+            => await ExecuteTransactionAsync(async () =>
+            {
+                var entity = await _unit.EmployeePersonalExpense.FindAsync(dto.Id)
+                    ?? throw new Exception("⚠ المصروف غير موجود.");
+
+                // Update allowed fields
+                entity.Amount = dto.Amount;
+                entity.Note = dto.Note;
+                entity.EmployeeId = dto.EmployeeId;
+
+                entity.UpdateDate = DateTime.UtcNow;
+
+                _unit.EmployeePersonalExpense.Update(entity);
+                return true;
+            });
+
 
         #endregion
 

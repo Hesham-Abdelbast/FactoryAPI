@@ -184,12 +184,12 @@ namespace FactoryAPI.Controllers.Equipments
             }
         }
 
-        [HttpGet("{equipmentId:guid}")]
-        public async Task<ActionResult<TResponse<IEnumerable<EquipmentExpenseDto>>>> GetExpenses(Guid equipmentId)
+        [HttpPost("{equipmentId:guid}")]
+        public async Task<ActionResult<TResponse<IEnumerable<EquipmentExpenseDto>>>> GetExpenses(Guid equipmentId, PaginationEntity param)
         {
             try
             {
-                var list = await service.GetEquipmentExpensesAsync(equipmentId);
+                var list = await service.GetEquipmentExpensesAsync(equipmentId,param);
                 return Ok(new TResponse<IEnumerable<EquipmentExpenseDto>> { Success = true, Data = list });
             }
             catch (Exception ex)
@@ -198,6 +198,25 @@ namespace FactoryAPI.Controllers.Equipments
                 return Ok(new TResponse<IEnumerable<EquipmentExpenseDto>> { Success = false, ReturnMsg = ex.Message });
             }
         }
+        [HttpPut]
+        public async Task<ActionResult<TResponse<bool>>> UpdateEquipmentExpense([FromBody] EquipmentExpenseDto dto)
+        {
+            try
+            {
+                var result = await service.UpdateEquipmentExpenseAsync(dto);
+                return Ok(new TResponse<bool>
+                {
+                    Success = result,
+                    ReturnMsg = result ? "✔ تم تعديل بيانات المعدة" : "❌ لم يتم التعديل"
+                });
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"{nameof(UpdateEquipmentExpense)}");
+                return Ok(new TResponse<bool> { Success = false, ReturnMsg = ex.Message });
+            }
+        }
+
 
         #endregion
 
@@ -233,18 +252,37 @@ namespace FactoryAPI.Controllers.Equipments
             }
         }
 
-        [HttpGet("{equipmentId:guid}")]
-        public async Task<ActionResult<TResponse<IEnumerable<EquipmentIncomeDto>>>> GetIncomes(Guid equipmentId)
+        [HttpPost("{equipmentId:guid}")]
+        public async Task<ActionResult<TResponse<IEnumerable<EquipmentIncomeDto>>>> GetIncomes(Guid equipmentId, PaginationEntity param)
         {
             try
             {
-                var list = await service.GetEquipmentIncomesAsync(equipmentId);
+                var list = await service.GetEquipmentIncomesAsync(equipmentId, param);
                 return Ok(new TResponse<IEnumerable<EquipmentIncomeDto>> { Success = true, Data = list });
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, $"{nameof(GetIncomes)}");
                 return Ok(new TResponse<IEnumerable<EquipmentIncomeDto>> { Success = false, ReturnMsg = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        public async Task<ActionResult<TResponse<bool>>> UpdateEquipmentIncome([FromBody] EquipmentIncomeDto dto)
+        {
+            try
+            {
+                var result = await service.UpdateEquipmentIncomeAsync(dto);
+                return Ok(new TResponse<bool>
+                {
+                    Success = result,
+                    ReturnMsg = result ? "✔ تم تعديل بيانات المعدة" : "❌ لم يتم التعديل"
+                });
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"{nameof(UpdateEquipmentIncome)}");
+                return Ok(new TResponse<bool> { Success = false, ReturnMsg = ex.Message });
             }
         }
 

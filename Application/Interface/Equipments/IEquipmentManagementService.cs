@@ -21,13 +21,15 @@ namespace Application.Interface.Equipments
         #region Equipment Expenses
         Task<Guid> AddEquipmentExpenseAsync(EquipmentExpenseDto dto);
         Task<bool> DeleteEquipmentExpenseAsync(Guid id);
-        Task<IEnumerable<EquipmentExpenseDto>> GetEquipmentExpensesAsync(Guid equipmentId);
+        Task<IEnumerable<EquipmentExpenseDto>> GetEquipmentExpensesAsync(Guid equipmentId, PaginationEntity param);
+        Task<bool> UpdateEquipmentExpenseAsync(EquipmentExpenseDto dto);
         #endregion
 
         #region Equipment Incomes
         Task<Guid> AddEquipmentIncomeAsync(EquipmentIncomeDto dto);
         Task<bool> DeleteEquipmentIncomeAsync(Guid id);
-        Task<IEnumerable<EquipmentIncomeDto>> GetEquipmentIncomesAsync(Guid equipmentId);
+        Task<IEnumerable<EquipmentIncomeDto>> GetEquipmentIncomesAsync(Guid equipmentId, PaginationEntity param);
+        Task<bool> UpdateEquipmentIncomeAsync(EquipmentIncomeDto dto);
         #endregion
 
         Task<EquipmentFinancialSummaryDto> GetEquipmentFinancialSummaryAsync(Guid equipmentId, ExpenseSummaryRequest request);

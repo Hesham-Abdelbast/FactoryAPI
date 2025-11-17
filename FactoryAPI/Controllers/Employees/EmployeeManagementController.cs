@@ -156,13 +156,13 @@ namespace FactoryAPI.Controllers.Employees
             }
         }
 
-        [HttpGet("{employeeId:guid}")]
-        public async Task<ActionResult<TResponse<IEnumerable<EmployeeCashAdvanceDto>>>> GetCashAdvances(Guid employeeId)
+        [HttpPost("{employeeId:guid}")]
+        public async Task<ActionResult<TResponse<IEnumerable<EmployeeCashAdvanceDto>>>> GetCashAdvances(Guid employeeId, PaginationEntity param)
         {
             try
             {
-                var result = await service.GetCashAdvancesAsync(employeeId);
-                return Ok(new TResponse<IEnumerable<EmployeeCashAdvanceDto>> { Success = true, Data = result });
+                var result = await service.GetCashAdvancesAsync(employeeId, param);
+                return Ok(new TResponse<IEnumerable<EmployeeCashAdvanceDto>> { Success = true, Data = result.Data ,TotalCount = result.TotalCount });
             }
             catch (Exception ex)
             {
@@ -170,7 +170,24 @@ namespace FactoryAPI.Controllers.Employees
                 return Ok(new TResponse<IEnumerable<EmployeeCashAdvanceDto>> { Success = false, ReturnMsg = ex.Message });
             }
         }
-
+        [HttpPut]
+        public async Task<ActionResult<TResponse<bool>>> UpdateEmployeeCashAdvance([FromBody] EmployeeCashAdvanceDto dto)
+        {
+            try
+            {
+                var result = await service.UpdateEmployeeCashAdvanceAsync(dto);
+                return Ok(new TResponse<bool>
+                {
+                    Success = result,
+                    ReturnMsg = result ? "✔ تم تعديل بيانات الموظف" : "❌ لم يتم التعديل"
+                });
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"{nameof(UpdateEmployeeCashAdvance)}");
+                return Ok(new TResponse<bool> { Success = false, ReturnMsg = ex.Message });
+            }
+        }
         #endregion
 
 
@@ -206,12 +223,12 @@ namespace FactoryAPI.Controllers.Employees
             }
         }
 
-        [HttpGet("{employeeId:guid}")]
-        public async Task<ActionResult<TResponse<IEnumerable<EmployeePersonalExpenseDto>>>> GetPersonalExpenses(Guid employeeId)
+        [HttpPost("{employeeId:guid}")]
+        public async Task<ActionResult<TResponse<IEnumerable<EmployeePersonalExpenseDto>>>> GetPersonalExpenses(Guid employeeId, PaginationEntity param)
         {
             try
             {
-                var result = await service.GetPersonalExpensesAsync(employeeId);
+                var result = await service.GetPersonalExpensesAsync(employeeId, param);
                 return Ok(new TResponse<IEnumerable<EmployeePersonalExpenseDto>> { Success = true, Data = result });
             }
             catch (Exception ex)
@@ -221,6 +238,24 @@ namespace FactoryAPI.Controllers.Employees
             }
         }
 
+        [HttpPut]
+        public async Task<ActionResult<TResponse<bool>>> UpdatePersonalExpense([FromBody] EmployeePersonalExpenseDto dto)
+        {
+            try
+            {
+                var result = await service.UpdatePersonalExpenseAsync(dto);
+                return Ok(new TResponse<bool>
+                {
+                    Success = result,
+                    ReturnMsg = result ? "✔ تم تعديل بيانات الموظف" : "❌ لم يتم التعديل"
+                });
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"{nameof(UpdatePersonalExpense)}");
+                return Ok(new TResponse<bool> { Success = false, ReturnMsg = ex.Message });
+            }
+        }
         #endregion
 
 

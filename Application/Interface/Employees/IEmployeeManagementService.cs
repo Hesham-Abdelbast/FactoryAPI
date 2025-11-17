@@ -1,11 +1,6 @@
-﻿using AppModels.Models.Employees;
+﻿using AppModels.Common;
+using AppModels.Models.Employees;
 using Ejd.GRC.AppModels.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Application.Interface.Employees
 {
     /// <summary>
@@ -30,12 +25,14 @@ namespace Application.Interface.Employees
         // Cash advance operations
         Task<Guid> AddCashAdvanceAsync(EmployeeCashAdvanceDto dto);
         Task<bool> DeleteCashAdvanceAsync(Guid id);
-        Task<IEnumerable<EmployeeCashAdvanceDto>> GetCashAdvancesAsync(Guid employeeId);
+        Task<PagedResult<EmployeeCashAdvanceDto>> GetCashAdvancesAsync(Guid employeeId, PaginationEntity param);
+        Task<bool> UpdateEmployeeCashAdvanceAsync(EmployeeCashAdvanceDto dto);
 
         // Personal expense operations
         Task<Guid> AddPersonalExpenseAsync(EmployeePersonalExpenseDto dto);
         Task<bool> DeletePersonalExpenseAsync(Guid id);
-        Task<IEnumerable<EmployeePersonalExpenseDto>> GetPersonalExpensesAsync(Guid employeeId);
+        Task<IEnumerable<EmployeePersonalExpenseDto>> GetPersonalExpensesAsync(Guid employeeId, PaginationEntity param);
+        Task<bool> UpdatePersonalExpenseAsync(EmployeePersonalExpenseDto dto);
 
         // Payroll operations
         Task<Guid> GeneratePayrollAsync(Guid employeeId, int year, int month);

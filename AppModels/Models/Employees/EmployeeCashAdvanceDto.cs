@@ -24,5 +24,7 @@ namespace AppModels.Models.Employees
         /// ملاحظة اختيارية
         /// </summary>
         public string? Note { get; set; }
+
+        public DateTime? CreateDate { get; set; }
     }
 }
