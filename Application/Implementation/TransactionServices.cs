@@ -7,6 +7,7 @@ using AppModels.Models.Transaction;
 using AutoMapper;
 using DAL;
 using Ejd.GRC.AppModels.Common;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Implementation
@@ -25,7 +26,7 @@ namespace Application.Implementation
         // ============================================================
         // البحث عن معاملة
         // ============================================================
-        public async Task<IEnumerable<TransactionDto?>> SearchAsync(TxnSearchDto searchDto)
+        public async Task<PagedResult<TransactionDto?>> SearchAsync(TxnSearchDto searchDto)
         {
             if (searchDto == null)
                 throw new ArgumentNullException(nameof(searchDto), "معايير البحث لا يمكن أن تكون فارغة.");
@@ -37,7 +38,7 @@ namespace Application.Implementation
                 .Include(x => x.Merchant)
                 .Include(x => x.Warehouse)
                 .AsQueryable();
-
+            var totalCount = await query.CountAsync();
             // ===============================
             // 🔍 Apply dynamic filters
             // ===============================
@@ -73,9 +74,12 @@ namespace Application.Implementation
                 .AsNoTracking()
                 .ToListAsync();
 
-            var mapped = _mapper.Map<IEnumerable<TransactionDto>>(result);
 
-            return mapped;
+            return new PagedResult<TransactionDto?>
+            {
+                TotalCount = totalCount,
+                Data = _mapper.Map<IEnumerable<TransactionDto>>(result)
+            };
         }
 
         // ============================================================
@@ -182,7 +186,7 @@ namespace Application.Implementation
         // ============================================================
         // 📋 جلب كل المعاملات
         // ============================================================
-        public async Task<IEnumerable<TransactionDto>> GetAllAsync(PaginationEntity param)
+        public async Task<PagedResult<TransactionDto>> GetAllAsync(PaginationEntity param)
         {
             var query = _unitOfWork.Transaction.All.Include(x=>x.MaterialType).Include(x => x.Merchant).Include(x=>x.Warehouse);
 
@@ -193,8 +197,11 @@ namespace Application.Implementation
                 .Take(param.PageSize)
                 .ToListAsync();
 
-            var data = _mapper.Map<IEnumerable<TransactionDto>>(items);
-            return data;
+            return new PagedResult<TransactionDto>()
+            {
+                TotalCount = totalCount,
+                Data = _mapper.Map<IEnumerable<TransactionDto>>(items)
+            };
         }
         // ============================================================
         // 📋 جلب كل المعاملات بناءً على معرف التاجر

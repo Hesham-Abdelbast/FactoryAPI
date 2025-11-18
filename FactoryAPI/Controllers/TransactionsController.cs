@@ -32,16 +32,15 @@ namespace FactoryAPI.Controllers
                 }
 
                 var result = await services.SearchAsync(searchDto);
-                var dataList = result.ToList();
 
                 return Ok(new TResponse<List<TransactionDto>>
                 {
                     Success = true,
-                    ReturnMsg = dataList.Any()
+                    ReturnMsg = result.Data.Any()
                         ? "تم جلب نتائج البحث بنجاح."
                         : "لم يتم العثور على نتائج مطابقة لمعايير البحث.",
-                    Data = dataList,
-                    TotalCount = dataList?.Count??0
+                    Data = result.Data.ToList(),
+                    TotalCount = result.TotalCount
                 });
             }
             catch (Exception ex)
@@ -71,8 +70,9 @@ namespace FactoryAPI.Controllers
                 return Ok(new TResponse<List<TransactionDto>>()
                 {
                     Success = true,
-                    Data = result.ToList(),
-                    ReturnMsg = "تم جلب جميع المعاملات بنجاح."
+                    Data = result.Data.ToList(),
+                    ReturnMsg = "تم جلب جميع المعاملات بنجاح.",
+                    TotalCount = result.TotalCount
                 });
             }
             catch (Exception ex)
