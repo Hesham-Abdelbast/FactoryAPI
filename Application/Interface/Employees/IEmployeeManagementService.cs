@@ -33,13 +33,5 @@ namespace Application.Interface.Employees
         Task<bool> DeletePersonalExpenseAsync(Guid id);
         Task<IEnumerable<EmployeePersonalExpenseDto>> GetPersonalExpensesAsync(Guid employeeId, PaginationEntity param);
         Task<bool> UpdatePersonalExpenseAsync(EmployeePersonalExpenseDto dto);
-
-        // Payroll operations
-        Task<Guid> GeneratePayrollAsync(Guid employeeId, int year, int month);
-        Task<EmployeeMonthlyPayrollDto?> GetPayrollAsync(Guid employeeId, int year, int month);
-        Task<IEnumerable<EmployeeMonthlyPayrollDto>> GetPayrollHistoryAsync(Guid employeeId);
-
-        // Reporting
-        Task<EmployeeFinancialReportDto> GetEmployeeFinancialSummaryAsync(Guid employeeId, DateTime? from = null, DateTime? to = null);
     }
 }

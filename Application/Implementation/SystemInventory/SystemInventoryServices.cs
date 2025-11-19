@@ -1,5 +1,6 @@
 ﻿using Application.Interface.SystemInventory;
 using AppModels.Common;
+using AppModels.Models.Employees;
 using AppModels.Models.SystemInventory;
 using AutoMapper;
 using DAL;
@@ -131,21 +132,21 @@ namespace Application.Implementation.SystemInventory
             var unpaidCount = baseQuery.AsEnumerable().Where(t => t.TotalAmount - t.AmountPaid > 0).Count();
             var totalRemainingAmount = await baseQuery.Select(t => (decimal?)(t.TotalAmount - t.AmountPaid)).SumAsync() ?? 0m;
 
-            // ⚠ اكتشاف العمليات الشاذة (فرق بين الوزن المتوقع والفعلي)
-            var anomalies = await baseQuery
-                .Where(t => t.CarAndMatrerialWeight - t.CarWeight - t.WeightOfImpurities != t.Quantity)
-                .Select(t => new AnomalyDto
-                {
-                    TransactionId = t.Id,
-                    TransactionIdentifier = t.TransactionIdentifier,
-                    CreateDate = t.CreateDate,
-                    MaterialTypeName = t.MaterialType != null ? t.MaterialType.Name : string.Empty,
-                    MerchantName = t.Merchant != null ? t.Merchant.Name : string.Empty,
-                    ExpectedQuantity = t.CarAndMatrerialWeight - t.CarWeight - t.WeightOfImpurities,
-                    ActualQuantity = t.Quantity,
-                    Difference = (t.CarAndMatrerialWeight - t.CarWeight - t.WeightOfImpurities) - t.Quantity
-                })
-                .ToListAsync();
+            //// ⚠ اكتشاف العمليات الشاذة (فرق بين الوزن المتوقع والفعلي)
+            //var anomalies = await baseQuery
+            //    .Where(t => t.CarAndMatrerialWeight - t.CarWeight - t.WeightOfImpurities != t.Quantity)
+            //    .Select(t => new AnomalyDto
+            //    {
+            //        TransactionId = t.Id,
+            //        TransactionIdentifier = t.TransactionIdentifier,
+            //        CreateDate = t.CreateDate,
+            //        MaterialTypeName = t.MaterialType != null ? t.MaterialType.Name : string.Empty,
+            //        MerchantName = t.Merchant != null ? t.Merchant.Name : string.Empty,
+            //        ExpectedQuantity = t.CarAndMatrerialWeight - t.CarWeight - t.WeightOfImpurities,
+            //        ActualQuantity = t.Quantity,
+            //        Difference = (t.CarAndMatrerialWeight - t.CarWeight - t.WeightOfImpurities) - t.Quantity
+            //    })
+            //    .ToListAsync();
 
             // 📦 تجميع البيانات النهائية في DTO التقرير
             var report = new TrnxReportDto
@@ -190,10 +191,58 @@ namespace Application.Implementation.SystemInventory
                     TotalRemainingAmount = totalRemainingAmount
                 },
 
-                Anomalies = anomalies
+                //Anomalies = anomalies
             };
 
             return report;
         }
+
+        // 🔹 هذه الدالة تقوم بإنشاء تقرير كامل عن عامل خلال فترة زمنية
+        public async Task<EmployeeFullFinancialReportDto> GetEmployeeFullFinancialReportAsync(Guid employeeId, DateTime from, DateTime to)
+        {
+            var fromDate = from.Date;
+            var toDate = to.Date.AddDays(1).AddTicks(-1);
+            // Employee Validation
+            var employee = await _unit.Employees.FindAsync(employeeId)
+                ?? throw new Exception("⚠ الموظف غير موجود.");
+
+            // Cash Advances total
+            var cashAdvances = await _unit.EmployeeCashAdvance.All
+                .Where(x => x.EmployeeId == employeeId
+                            && x.CreateDate >= fromDate
+                            && x.CreateDate <= toDate)
+                .SumAsync(x => x.Amount);
+
+            // Personal Expenses total
+            var personalExpenses = await _unit.EmployeePersonalExpense.All
+                .Where(x => x.EmployeeId == employeeId
+                            && x.CreateDate >= fromDate
+                            && x.CreateDate <= toDate)
+                .SumAsync(x => x.Amount);
+
+            //// Payroll history filtered by date range
+            //var payrollHistory = await _unit.EmployeeMonthlyPayroll.All
+            //    .Where(x => x.EmployeeId == employeeId
+            //                && new DateTime(x.Year, x.Month, 1) >= new DateTime(fromDate.Year, fromDate.Month, 1)
+            //                && new DateTime(x.Year, x.Month, 1) <= new DateTime(toDate.Year, toDate.Month, 1))
+            //    .OrderByDescending(x => x.Year)
+            //    .ThenByDescending(x => x.Month)
+            //    .AsNoTracking()
+            //    .ToListAsync();
+
+            return new EmployeeFullFinancialReportDto
+            {
+                EmployeeId = employeeId,
+                EmployeeName = employee.Name,
+                BaseSalary = employee.BaseSalary,
+                PeriodFrom = fromDate,
+                PeriodTo = toDate,
+                TotalCashAdvances = cashAdvances,
+                TotalPersonalExpenses = personalExpenses,
+                //PayrollHistory = _mapper.Map<IEnumerable<EmployeeMonthlyPayrollDto>>(payrollHistory)
+            };
+        }
+
+
     }
 }
