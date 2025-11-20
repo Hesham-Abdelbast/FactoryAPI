@@ -38,6 +38,7 @@ namespace Application.Implementation
                 .Include(x => x.Merchant)
                 .Include(x => x.Warehouse)
                 .AsQueryable();
+
             var totalCount = await query.CountAsync();
             // ===============================
             // 🔍 Apply dynamic filters

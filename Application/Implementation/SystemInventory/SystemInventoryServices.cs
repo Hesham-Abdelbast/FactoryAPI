@@ -132,21 +132,21 @@ namespace Application.Implementation.SystemInventory
             var unpaidCount = baseQuery.AsEnumerable().Where(t => t.TotalAmount - t.AmountPaid > 0).Count();
             var totalRemainingAmount = await baseQuery.Select(t => (decimal?)(t.TotalAmount - t.AmountPaid)).SumAsync() ?? 0m;
 
-            //// ⚠ اكتشاف العمليات الشاذة (فرق بين الوزن المتوقع والفعلي)
-            //var anomalies = await baseQuery
-            //    .Where(t => t.CarAndMatrerialWeight - t.CarWeight - t.WeightOfImpurities != t.Quantity)
-            //    .Select(t => new AnomalyDto
-            //    {
-            //        TransactionId = t.Id,
-            //        TransactionIdentifier = t.TransactionIdentifier,
-            //        CreateDate = t.CreateDate,
-            //        MaterialTypeName = t.MaterialType != null ? t.MaterialType.Name : string.Empty,
-            //        MerchantName = t.Merchant != null ? t.Merchant.Name : string.Empty,
-            //        ExpectedQuantity = t.CarAndMatrerialWeight - t.CarWeight - t.WeightOfImpurities,
-            //        ActualQuantity = t.Quantity,
-            //        Difference = (t.CarAndMatrerialWeight - t.CarWeight - t.WeightOfImpurities) - t.Quantity
-            //    })
-            //    .ToListAsync();
+            // ⚠ اكتشاف العمليات الشاذة (فرق بين الوزن المتوقع والفعلي)
+            var anomalies = await baseQuery
+                .Where(t => t.CarAndMatrerialWeight - t.CarWeight - t.WeightOfImpurities != t.Quantity)
+                .Select(t => new AnomalyDto
+                {
+                    TransactionId = t.Id,
+                    TransactionIdentifier = t.TransactionIdentifier,
+                    CreateDate = t.CreateDate,
+                    MaterialTypeName = t.MaterialType != null ? t.MaterialType.Name : string.Empty,
+                    MerchantName = t.Merchant != null ? t.Merchant.Name : string.Empty,
+                    ExpectedQuantity = t.CarAndMatrerialWeight - t.CarWeight - t.WeightOfImpurities,
+                    ActualQuantity = t.Quantity,
+                    Difference = (t.CarAndMatrerialWeight - t.CarWeight - t.WeightOfImpurities) - t.Quantity
+                })
+                .ToListAsync();
 
             // 📦 تجميع البيانات النهائية في DTO التقرير
             var report = new TrnxReportDto
@@ -191,7 +191,7 @@ namespace Application.Implementation.SystemInventory
                     TotalRemainingAmount = totalRemainingAmount
                 },
 
-                //Anomalies = anomalies
+                Anomalies = anomalies
             };
 
             return report;
@@ -242,7 +242,5 @@ namespace Application.Implementation.SystemInventory
                 //PayrollHistory = _mapper.Map<IEnumerable<EmployeeMonthlyPayrollDto>>(payrollHistory)
             };
         }
-
-
     }
 }

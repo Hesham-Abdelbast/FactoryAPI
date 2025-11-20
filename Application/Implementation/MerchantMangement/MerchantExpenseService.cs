@@ -40,6 +40,28 @@ namespace Application.Implementation.MerchantMangement
                                  : _mapper.Map<IEnumerable<MerchantExpenseDto>>(items);
         }
 
+        public async Task<PagedResult<MerchantExpenseDto>> GetAllByMerchantIdAsync(Guid merchantId,PaginationEntity param)
+        {
+            if (param == null) throw new ArgumentNullException(nameof(param), "معايير البحث غير موجودة.");
+
+            var query = _unit.MerchantExpense.All
+                .Include(x => x.Merchant)
+                .Where (x => x.MerchantId == merchantId)
+                .OrderByDescending(x => x.ExpenseDate);
+
+
+            var items = await query
+                .Skip((param.PageIndex - 1) * param.PageSize)
+                .Take(param.PageSize)
+                .ToListAsync();
+            return new PagedResult<MerchantExpenseDto>()
+            {
+                Data = items == null ? Enumerable.Empty<MerchantExpenseDto>()
+                                 : _mapper.Map<IEnumerable<MerchantExpenseDto>>(items),
+                TotalCount = query.Count()
+            };
+        }
+
         public async Task<IEnumerable<MerchantExpenseDto>> GetAllAsync()
         {
             var list = await _unit.MerchantExpense.All

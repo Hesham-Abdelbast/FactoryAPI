@@ -6,6 +6,7 @@ namespace Application.Interface.MerchantMangement
     public interface IMerchantExpenseService
     {
         Task<IEnumerable<MerchantExpenseDto>> GetAllAsync(PaginationEntity param);
+        Task<PagedResult<MerchantExpenseDto>> GetAllByMerchantIdAsync(Guid merchantId, PaginationEntity param);
         Task<IEnumerable<MerchantExpenseDto>> GetAllAsync();
         Task<MerchantExpenseDto?> GetByIdAsync(Guid id);
         Task<Guid> CreateAsync(MerchantExpenseCreateDto dto);

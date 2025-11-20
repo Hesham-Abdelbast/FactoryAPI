@@ -67,7 +67,30 @@ namespace FactoryAPI.Controllers.MerchantMangement
             }
         }
 
-
+        [HttpPost(("{id:guid}"))]
+        public async Task<ActionResult<TResponse<List<MerchantExpenseDto>>>> GetAllByMerchantIdWithPagination(Guid id,PaginationEntity param)
+        {
+            try
+            {
+                var result = await services.GetAllByMerchantIdAsync(id,param);
+                return Ok(new TResponse<List<MerchantExpenseDto>>
+                {
+                    Success = true,
+                    ReturnMsg = "تم جلب جميع السلف بنجاح.",
+                    Data = result.Data.ToList(),
+                    TotalCount = result.TotalCount
+                });
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"{GetType().Name}.{nameof(GetAllWithPagination)}");
+                return Ok(new TResponse<List<MerchantExpenseDto>>
+                {
+                    Success = false,
+                    ReturnMsg = "حدث خطأ أثناء الجلب: " + ex.Message
+                });
+            }
+        }
         // ============================================================
         // 🔍 جلب سلفة حسب ID
         // ============================================================

@@ -1,6 +1,7 @@
 ﻿using Application.Interface.MerchantMangement;
 using AppModels.Common;
 using AppModels.Models.MerchantMangement;
+using Ejd.GRC.AppModels.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -22,6 +23,32 @@ namespace FactoryAPI.Controllers.MerchantMangement
                 {
                     Success = true,
                     Data = result.ToList()
+                });
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"{GetType().Name}.{nameof(GetAll)}");
+                return Ok(new TResponse<List<MerchantDto>>
+                {
+                    Success = false,
+                    ReturnMsg = ex.Message
+                });
+            }
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<TResponse<List<MerchantDto>>>> GetAll(PaginationEntity param)
+        {
+            try
+            {
+                var result = await services.GetAllAsync(param);
+                return Ok(new TResponse<List<MerchantDto>>()
+                {
+                    Success = true,
+                    Data = result.Data.ToList(),
+                    TotalCount = result.TotalCount
                 });
             }
             catch (Exception ex)

@@ -16,7 +16,7 @@ namespace Application.Interface.MerchantMangement
         Task<IEnumerable<MerchantDto>> GetAllAsync();
 
         // Read (Get all) مع Pagination
-        Task<IEnumerable<MerchantDto>> GetAllAsync(PaginationEntity param);
+        Task<PagedResult<MerchantDto>> GetAllAsync(PaginationEntity param);
 
         // Update
         Task<bool> UpdateAsync(MerchantDto entity);

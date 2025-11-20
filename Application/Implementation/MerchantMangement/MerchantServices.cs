@@ -3,6 +3,7 @@ using AppModels.Common;
 using AppModels.Entities.MerchantMangement;
 using AppModels.Models.MerchantMangement;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using DAL;
 using Ejd.GRC.AppModels.Common;
 using Microsoft.EntityFrameworkCore;
@@ -116,19 +117,30 @@ namespace Application.Implementation.MerchantMangement
             return _mapper.Map<IEnumerable<MerchantDto>>(list);
         }
 
-        public async Task<IEnumerable<MerchantDto>> GetAllAsync(PaginationEntity param)
+        public async Task<PagedResult<MerchantDto>> GetAllAsync(PaginationEntity param)
         {
-            var query = _unit.Merchant.All
-                .Where(x => !x.IsDeleted)
-                .OrderByDescending(x => x.CreateDate);
+            var query = _unit.Merchant.All;
 
+            if(!string.IsNullOrEmpty(param.Search))
+                query = query.Where(x=>x.Name.Contains(param.Search));
+
+            // Get total before pagination
+            var totalCount = await query.CountAsync();
+
+            // Apply pagination + ordering + project to DTO at DB level
             var merchants = await query
+                .OrderByDescending(x => x.CreateDate)
                 .Skip((param.PageIndex - 1) * param.PageSize)
                 .Take(param.PageSize)
                 .AsNoTracking()
+                .ProjectTo<MerchantDto>(_mapper.ConfigurationProvider) // Efficient: projection in DB
                 .ToListAsync();
 
-            return _mapper.Map<IEnumerable<MerchantDto>>(merchants);
+            return new PagedResult<MerchantDto>
+            {
+                Data = merchants,
+                TotalCount = totalCount,
+            };
         }
 
         public async Task<bool> ExistsAsync(Guid id)
