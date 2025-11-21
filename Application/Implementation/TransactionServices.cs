@@ -28,6 +28,8 @@ namespace Application.Implementation
         // ============================================================
         public async Task<PagedResult<TransactionDto?>> SearchAsync(TxnSearchDto searchDto)
         {
+            
+            
             if (searchDto == null)
                 throw new ArgumentNullException(nameof(searchDto), "معايير البحث لا يمكن أن تكون فارغة.");
 
@@ -54,11 +56,16 @@ namespace Application.Implementation
                 query = query.Where(x => x.Warehouse != null && x.Warehouse.Name.Contains(searchDto.WarehouseName));
 
             if (searchDto.FromDate.HasValue)
-                query = query.Where(x => x.CreateDate >= searchDto.FromDate.Value);
-
+            {
+                var fromDate = searchDto.FromDate.Value.Date;
+                query = query.Where(x => x.CreateDate >= fromDate);
+            }
+                
             if (searchDto.ToDate.HasValue)
+            {
+                var toDate = searchDto.ToDate.Value.Date.AddDays(1).AddTicks(-1);
                 query = query.Where(x => x.CreateDate <= searchDto.ToDate.Value);
-
+            }
             // ===============================
             // 💰 Paid / Unpaid Filters
             // ===============================
