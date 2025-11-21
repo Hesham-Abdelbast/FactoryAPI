@@ -114,5 +114,48 @@ namespace FactoryAPI.Controllers
                 });
             }
         }
+
+
+        // ======================================================================
+        // 📦 تقرير العمليات بناءً على قائمة معرفات المعاملات (Ids)
+        // ======================================================================
+        [HttpPost()]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<TResponse<TrnxReportDto>>> GetTrnxReportByIds([FromBody] List<string> transactionIds)
+        {
+            try
+            {
+                // ⚠ التحقق من أن القائمة ليست فارغة أو null
+                if (transactionIds == null || transactionIds.Count == 0)
+                {
+                    return Ok(new TResponse<TrnxReportDto>
+                    {
+                        Success = false,
+                        ReturnMsg = "⚠️ يجب اختيار عملية واحدة على الأقل لإنشاء التقرير."
+                    });
+                }
+
+                // 🚀 تنفيذ التقرير
+                var result = await services.GetTrnxReportByIdsAsync(transactionIds);
+
+                return Ok(new TResponse<TrnxReportDto>
+                {
+                    Success = true,
+                    ReturnMsg = "📄 تم إنشاء التقرير بنجاح بناءً على المعاملات المحددة.",
+                    Data = result
+                });
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"{GetType().Name}.{nameof(GetTrnxReportByIds)}");
+
+                return Ok(new TResponse<TrnxReportDto>
+                {
+                    Success = false,
+                    ReturnMsg = "❌ حدث خطأ أثناء إنشاء التقرير: " + ex.Message
+                });
+            }
+        }
+
     }
 }

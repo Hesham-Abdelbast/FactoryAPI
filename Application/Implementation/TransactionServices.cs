@@ -90,7 +90,6 @@ namespace Application.Implementation
             // ===============================
             int skip = (searchDto.PageIndex - 1) * searchDto.PageSize;
             query = query
-                .OrderByDescending(x => x.CreateDate) // Sort by latest transaction
                 .Skip(skip)
                 .Take(searchDto.PageSize);
 

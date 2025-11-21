@@ -1,4 +1,5 @@
 ﻿using AppModels.Models.Employees;
+using AppModels.Models.MerchantMangement;
 using AppModels.Models.SystemInventory;
 
 namespace Application.Interface.SystemInventory
@@ -7,5 +8,7 @@ namespace Application.Interface.SystemInventory
     {
         Task<TrnxReportDto> GetTrnxReportAsync(DateTime from, DateTime to);
         Task<EmployeeFullFinancialReportDto> GetEmployeeFullFinancialReportAsync(Guid employeeId, DateTime from, DateTime to);
+        Task<MerchantInventoryResultDto> GetMerchantInventoryAsync(Guid merchantId, DateTime fromDate, DateTime toDate);
+        Task<TrnxReportDto> GetTrnxReportByIdsAsync(List<string> transactionIds);
     }
 }

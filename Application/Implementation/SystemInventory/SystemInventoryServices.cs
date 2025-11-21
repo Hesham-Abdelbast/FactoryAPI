@@ -303,5 +303,171 @@ namespace Application.Implementation.SystemInventory
             };
         }
 
+        public async Task<TrnxReportDto> GetTrnxReportByIdsAsync(List<string> transactionIds)
+        {
+            if (transactionIds == null || transactionIds.Count == 0)
+                throw new ArgumentException("Transaction IDs list cannot be empty.", nameof(transactionIds));
+
+            // 🧾 الاستعلام الأساسي فقط حسب الـ Ids
+            var baseQuery = _unit.Transaction
+                .All
+                .Include(t => t.MaterialType)
+                .Include(t => t.Merchant)
+                .Include(t => t.Warehouse)
+                .Where(t => transactionIds.Contains(t.Id.ToString()));
+
+            // 🔸 تقسيم حسب النوع
+            var incomeQuery = baseQuery.Where(t => t.Type == TransactionType.Income);
+            var outcomeQuery = baseQuery.Where(t => t.Type == TransactionType.Outcome);
+
+            // 📊 إحصاءات
+            var totalTransactions = await baseQuery.CountAsync();
+            var incomeCount = await incomeQuery.CountAsync();
+            var outcomeCount = await outcomeQuery.CountAsync();
+
+            // 💰 مبالغ الوارد والصادر
+            var totalIncomeAmount = await incomeQuery.Select(t => (decimal?)t.TotalAmount).SumAsync() ?? 0m;
+            var totalOutcomeAmount = await outcomeQuery.Select(t => (decimal?)t.TotalAmount).SumAsync() ?? 0m;
+
+            // 💵 المدفوعات
+            var totalIncomePaid = await incomeQuery.Select(t => (decimal?)t.AmountPaid).SumAsync() ?? 0m;
+            var totalOutcomePaid = await outcomeQuery.Select(t => (decimal?)t.AmountPaid).SumAsync() ?? 0m;
+
+            // 🧮 المتبقي
+            var totalIncomeRemaining = totalIncomeAmount - totalIncomePaid;
+            var totalOutcomeRemaining = totalOutcomeAmount - totalOutcomePaid;
+
+            // 📦 الكميات
+            var totalIncomeQty = await incomeQuery.Select(t => (decimal?)t.Quantity).SumAsync() ?? 0m;
+            var totalOutcomeQty = await outcomeQuery.Select(t => (decimal?)t.Quantity).SumAsync() ?? 0m;
+            var netQuantity = totalIncomeQty - totalOutcomeQty;
+
+            // 🧪 نسبة ووزن الشوائب
+            var totalImpurities = await baseQuery.Select(t => (decimal?)t.WeightOfImpurities).SumAsync() ?? 0m;
+            var avgImpurityPercent = await baseQuery.Select(t => (decimal?)t.PercentageOfImpurities).AverageAsync() ?? 0m;
+
+            // 📌 تلخيص حسب نوع المادة (وارد)
+            var incomeByMaterial = await incomeQuery
+                .GroupBy(t => new { t.MaterialTypeId, Name = t.MaterialType!.Name })
+                .Select(g => new MaterialSummaryDto
+                {
+                    MaterialTypeId = g.Key.MaterialTypeId,
+                    MaterialTypeName = g.Key.Name,
+                    TransactionCount = g.Count(),
+                    TotalQuantity = g.Sum(x => x.Quantity),
+                    TotalAmount = g.Sum(x => x.TotalAmount),
+                    TotalPaid = g.Sum(x => x.AmountPaid),
+                    TotalRemaining = g.Sum(x => x.TotalAmount - x.AmountPaid),
+                    TotalImpurities = g.Sum(x => x.WeightOfImpurities),
+                    AvgPricePerUnit = g.Average(x => x.PricePerUnit)
+                }).ToListAsync();
+
+            // 📌 تلخيص حسب نوع المادة (صادر)
+            var outcomeByMaterial = await outcomeQuery
+                .GroupBy(t => new { t.MaterialTypeId, Name = t.MaterialType!.Name })
+                .Select(g => new MaterialSummaryDto
+                {
+                    MaterialTypeId = g.Key.MaterialTypeId,
+                    MaterialTypeName = g.Key.Name,
+                    TransactionCount = g.Count(),
+                    TotalQuantity = g.Sum(x => x.Quantity),
+                    TotalAmount = g.Sum(x => x.TotalAmount),
+                    TotalPaid = g.Sum(x => x.AmountPaid),
+                    TotalRemaining = g.Sum(x => x.TotalAmount - x.AmountPaid),
+                    TotalImpurities = g.Sum(x => x.WeightOfImpurities),
+                    AvgPricePerUnit = g.Average(x => x.PricePerUnit)
+                }).ToListAsync();
+
+            // 🏭 تجميع حسب المخزن
+            var byWarehouse = await baseQuery
+                .GroupBy(t => new { t.WarehouseId, Name = t.Warehouse!.Name })
+                .Select(g => new WarehouseSummaryDto
+                {
+                    WarehouseId = g.Key.WarehouseId,
+                    WarehouseName = g.Key.Name,
+                    TransactionCount = g.Count(),
+                    TotalQuantity = g.Sum(x => x.Quantity),
+                    TotalAmount = g.Sum(x => x.TotalAmount)
+                }).ToListAsync();
+
+            // 🥇 أفضل التجار
+            var topMerchantsByAmount = await baseQuery
+                .GroupBy(t => new { t.MerchantId, Name = t.Merchant!.Name })
+                .Select(g => new MerchantSummaryDto
+                {
+                    MerchantId = g.Key.MerchantId,
+                    MerchantName = g.Key.Name,
+                    TransactionCount = g.Count(),
+                    TotalAmount = g.Sum(x => x.TotalAmount),
+                    TotalPaid = g.Sum(x => x.AmountPaid),
+                    TotalQuantity = g.Sum(x => x.Quantity)
+                })
+                .OrderByDescending(m => m.TotalAmount)
+                .Take(10)
+                .ToListAsync();
+
+            // 💳 حالة السداد
+            var remainingAmounts = await baseQuery.Select(t => (decimal?)(t.TotalAmount - t.AmountPaid)).ToListAsync();
+            var fullyPaidCount = remainingAmounts.Count(x => x <= 0);
+            var unpaidCount = remainingAmounts.Count(x => x > 0);
+            var totalRemainingAmount = remainingAmounts.Sum();
+
+            // ⚠ كشف الأخطاء
+            var anomalies = await baseQuery
+                .Where(t => t.CarAndMatrerialWeight - t.CarWeight - t.WeightOfImpurities != t.Quantity)
+                .Select(t => new AnomalyDto
+                {
+                    TransactionId = t.Id,
+                    TransactionIdentifier = t.TransactionIdentifier,
+                    CreateDate = t.CreateDate,
+                    MaterialTypeName = t.MaterialType!.Name,
+                    MerchantName = t.Merchant!.Name,
+                    ExpectedQuantity = t.CarAndMatrerialWeight - t.CarWeight - t.WeightOfImpurities,
+                    ActualQuantity = t.Quantity,
+                    Difference = (t.CarAndMatrerialWeight - t.CarWeight - t.WeightOfImpurities) - t.Quantity
+                }).ToListAsync();
+
+            // 📦 التقرير النهائي
+            return new TrnxReportDto
+            {
+                TotalTransactions = totalTransactions,
+                From = DateTime.MinValue, // optional placeholder
+                To = DateTime.MinValue,
+                IncomeSummary = new TypeSummaryDto
+                {
+                    TransactionCount = incomeCount,
+                    TotalAmount = totalIncomeAmount,
+                    TotalPaid = totalIncomePaid,
+                    TotalRemaining = totalIncomeRemaining,
+                    TotalQuantity = totalIncomeQty,
+                    TotalImpurities = totalImpurities
+                },
+                OutcomeSummary = new TypeSummaryDto
+                {
+                    TransactionCount = outcomeCount,
+                    TotalAmount = totalOutcomeAmount,
+                    TotalPaid = totalOutcomePaid,
+                    TotalRemaining = totalOutcomeRemaining,
+                    TotalQuantity = totalOutcomeQty,
+                    TotalImpurities = totalImpurities
+                },
+                NetQuantity = netQuantity,
+                TotalImpurities = totalImpurities,
+                AverageImpurityPercentage = avgImpurityPercent,
+                IncomeByMaterial = incomeByMaterial,
+                OutcomeByMaterial = outcomeByMaterial,
+                WarehouseSummaries = byWarehouse,
+                TopMerchants = topMerchantsByAmount,
+                PaymentSummary = new PaymentSummaryDto
+                {
+                    FullyPaidCount = fullyPaidCount,
+                    UnpaidCount = unpaidCount,
+                    TotalRemainingAmount = totalRemainingAmount.GetValueOrDefault(),
+                },
+                Anomalies = anomalies
+            };
+        }
+
+
     }
 }
