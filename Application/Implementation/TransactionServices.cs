@@ -41,6 +41,10 @@ namespace Application.Implementation
                 .Include(x => x.Warehouse)
                 .AsQueryable();
 
+            query = query.Where(x=>x.Merchant.IsDeleted == false);
+            query = query.Where(x=>x.MaterialType.IsDeleted == false);
+            query = query.Where(x=>x.Warehouse.IsDeleted == false);
+
             
             // ===============================
             // 🔍 Apply dynamic filters
