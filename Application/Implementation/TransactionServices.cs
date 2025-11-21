@@ -41,7 +41,7 @@ namespace Application.Implementation
                 .Include(x => x.Warehouse)
                 .AsQueryable();
 
-            var totalCount = await query.CountAsync();
+            
             // ===============================
             // 🔍 Apply dynamic filters
             // ===============================
@@ -83,6 +83,8 @@ namespace Application.Implementation
 
             // If both selected → no filter
 
+
+            var totalCount = await query.CountAsync();
             // ===============================
             // 📄 Pagination
             // ===============================
