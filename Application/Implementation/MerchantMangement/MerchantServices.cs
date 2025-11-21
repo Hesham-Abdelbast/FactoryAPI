@@ -10,9 +10,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Implementation.MerchantMangement
 {
-    /// <summary>
-    /// ⚙ خدمة مسؤولة عن إدارة التجار، السُلف، والمصاريف مع دعم المعاملات و Pagination
-    /// </summary>
     public class MerchantServices : IMerchantServices
     {
         private readonly IUnitOfWork _unit;

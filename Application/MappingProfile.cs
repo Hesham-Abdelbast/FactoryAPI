@@ -37,10 +37,14 @@ namespace Application
                 .ReverseMap();
 
             _ = CreateMap<MerchantExpenseDto, MerchantExpense>()
-                .ReverseMap();
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(x => x.Notes))
+                .ReverseMap()
+                .ForMember(dest => dest.Notes, opt => opt.MapFrom(x => x.Description));
 
             _ = CreateMap<MerchantExpenseCreateDto, MerchantExpense>()
-                .ReverseMap();
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(x => x.Notes))
+                .ReverseMap()
+                .ForMember(dest => dest.Notes , opt => opt.MapFrom(x=>x.Description));
 
             _ = CreateMap<Contact, ContactDto>()
                .ReverseMap();

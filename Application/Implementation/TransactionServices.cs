@@ -60,6 +60,23 @@ namespace Application.Implementation
                 query = query.Where(x => x.CreateDate <= searchDto.ToDate.Value);
 
             // ===============================
+            // 💰 Paid / Unpaid Filters
+            // ===============================
+
+            // إذا تم اختيار واحد فقط (Exclusive Selection)
+            bool paidSelected = searchDto.IsPaid == true;
+            bool unpaidSelected = searchDto.IsUnPaid == true;
+            // إذا واحد فقط منهم true نطبق الفلتر
+            if (paidSelected ^ unpaidSelected)
+            {
+                query = paidSelected
+                    ? query.Where(x => x.TotalAmount - x.AmountPaid <= 0)
+                    : query.Where(x => x.TotalAmount - x.AmountPaid > 0);
+            }
+
+            // If both selected → no filter
+
+            // ===============================
             // 📄 Pagination
             // ===============================
             int skip = (searchDto.PageIndex - 1) * searchDto.PageSize;

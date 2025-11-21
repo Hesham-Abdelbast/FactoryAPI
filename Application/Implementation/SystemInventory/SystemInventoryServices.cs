@@ -1,8 +1,11 @@
 ﻿using Application.Interface.SystemInventory;
 using AppModels.Common;
 using AppModels.Models.Employees;
+using AppModels.Models.MerchantMangement;
 using AppModels.Models.SystemInventory;
+using AppModels.Models.Transaction;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using DAL;
 using Microsoft.EntityFrameworkCore;
 
@@ -242,5 +245,63 @@ namespace Application.Implementation.SystemInventory
                 //PayrollHistory = _mapper.Map<IEnumerable<EmployeeMonthlyPayrollDto>>(payrollHistory)
             };
         }
+
+        public async Task<MerchantInventoryResultDto> GetMerchantInventoryAsync(Guid merchantId, DateTime fromDate, DateTime toDate)
+        {
+            // 🎯 ضبط التاريخ ليشمل اليوم بالكامل (من بداية اليوم إلى نهايته)
+            var from = fromDate.Date;
+            var to = toDate.Date.AddDays(1).AddTicks(-1);
+
+            if (merchantId == Guid.Empty)
+                throw new ArgumentException("⚠ معرف التاجر غير صالح.");
+
+            // Get merchant basic details
+            var merchant = await _unit.Merchant.All
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == merchantId);
+
+            if (merchant == null)
+                throw new Exception("⚠ التاجر غير موجود.");
+
+            // --- Fetch filtered transactions ---
+            var transactionsQuery = _unit.Transaction.All 
+                .Where(x => x.MerchantId == merchantId &&
+                            x.CreateDate >= from &&
+                            x.CreateDate <= to);
+
+            var transactions = await transactionsQuery
+                .OrderByDescending(x => x.CreateDate)
+                .ProjectTo<TransactionDto>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            var totalSales = await transactionsQuery.SumAsync(x => (decimal?)x.TotalAmount) ?? 0;
+
+
+            // --- Fetch filtered expenses ---
+            var expensesQuery = _unit.MerchantExpense.All
+                .Where(x => x.MerchantId == merchantId &&
+                            x.ExpenseDate >= from &&
+                            x.ExpenseDate <= to );
+
+            var expenses = await expensesQuery
+                .OrderByDescending(x => x.ExpenseDate)
+                .ProjectTo<MerchantExpenseDto>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            var totalExpenses = await expensesQuery.SumAsync(x => (decimal?)x.Amount) ?? 0;
+
+
+            // --- Construct final result ---
+            return new MerchantInventoryResultDto
+            {
+                MerchantId = merchant.Id,
+                MerchantName = merchant.Name,
+                TotalSales = totalSales,
+                TotalExpenses = totalExpenses,
+                Transactions = transactions,
+                MerchantExpenses = expenses
+            };
+        }
+
     }
 }

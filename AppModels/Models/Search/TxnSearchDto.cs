@@ -10,6 +10,7 @@ namespace AppModels.Models.Search
         public string? MerchantName { get; set; }
         public string? MaterialTypeName { get; set; }
         public string? WarehouseName { get; set; }
-
+        public bool? IsUnPaid { get; set; }
+        public bool? IsPaid { get; set; }
     }
 }
