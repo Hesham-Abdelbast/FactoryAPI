@@ -37,6 +37,10 @@ namespace Application.Implementation.SystemInventory
                 .Include(t => t.Warehouse)
                 .Where(t => t.CreateDate >= fromDate && t.CreateDate <= toDate);
 
+            baseQuery = baseQuery.Where(x=>x.Merchant.IsDeleted == false);
+            baseQuery = baseQuery.Where(x=>x.Warehouse.IsDeleted == false);
+            baseQuery = baseQuery.Where(x=>x.MaterialType.IsDeleted == false);
+
             // 🔸 فلترة المعاملات حسب نوعها (وارد / صادر)
             var incomeQuery = baseQuery.Where(t => t.Type == TransactionType.Income);
             var outcomeQuery = baseQuery.Where(t => t.Type == TransactionType.Outcome);
