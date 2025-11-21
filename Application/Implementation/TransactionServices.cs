@@ -64,7 +64,7 @@ namespace Application.Implementation
             if (searchDto.ToDate.HasValue)
             {
                 var toDate = searchDto.ToDate.Value.Date.AddDays(1).AddTicks(-1);
-                query = query.Where(x => x.CreateDate <= searchDto.ToDate.Value);
+                query = query.Where(x => x.CreateDate <= toDate);
             }
             // ===============================
             // 💰 Paid / Unpaid Filters
