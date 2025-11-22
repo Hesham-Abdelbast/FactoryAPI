@@ -7,5 +7,7 @@ namespace Ejd.GRC.AppModels.Common
         public int PageIndex { get; set; } = 0;
         public int? TotalCount { get; set; }//required from the second call
         public string? Search { get; set; }
+        public DateTime? From { get; set; }
+        public DateTime? To { get; set; }
     }
 }

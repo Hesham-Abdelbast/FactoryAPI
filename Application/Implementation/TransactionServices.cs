@@ -248,6 +248,19 @@ namespace Application.Implementation
             entities = entities.Where(x=>x.Merchant.IsDeleted==false);
             entities = entities.Where(x=>x.MaterialType.IsDeleted==false);
             entities = entities.Where(x=>x.Warehouse.IsDeleted==false);
+
+            if(param.From.HasValue)
+            {
+                var fromDate = param.From.Value.Date;
+                entities = entities.Where(x => x.CreateDate >= fromDate);
+            }
+
+            if (param.To.HasValue)
+            {
+                var toDate = param.To.Value.Date.AddDays(1).AddTicks(-1);
+                entities = entities.Where(x => x.CreateDate <= toDate);
+            }
+
             var totalCount = entities.Count();
             // ===============================
             // 📄 Pagination

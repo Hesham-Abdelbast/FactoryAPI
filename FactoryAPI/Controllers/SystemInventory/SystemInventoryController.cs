@@ -163,7 +163,7 @@ namespace FactoryAPI.Controllers
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"{GetType().Name}.{nameof(GetMerchantInventory)}");
+                    logger.LogError(ex, $"{GetType().Name}.{nameof(GetMerchantInventory)}");
 
                 return Ok(new TResponse<MerchantInventoryResultDto>
                 {

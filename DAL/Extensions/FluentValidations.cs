@@ -12,6 +12,28 @@ namespace DAL.Extensions
     {
         public static ModelBuilder AddFrameworkValidations(this ModelBuilder modelBuilder)
         {
+            // Apply global query filters for soft delete
+            modelBuilder.Entity<Merchant>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<MerchantExpense>().HasQueryFilter(e => !e.IsDeleted);
+
+            modelBuilder.Entity<MaterialType>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<Transaction>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<Contact>().HasQueryFilter(e => !e.IsDeleted);
+
+            modelBuilder.Entity<Warehouse>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<WarehouseInventory>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<WarehouseExpense>().HasQueryFilter(e => !e.IsDeleted);
+
+            modelBuilder.Entity<Employee>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<EmployeeMonthlyPayroll>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<EmployeePersonalExpense>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<EmployeeCashAdvance>().HasQueryFilter(e => !e.IsDeleted);
+
+            modelBuilder.Entity<Equipment>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<EquipmentExpense>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<EquipmentIncome>().HasQueryFilter(e => !e.IsDeleted);
+
+            modelBuilder.Entity<Financing>().HasQueryFilter(e => !e.IsDeleted);
 
             // تطبيق تلقائي لكل الـ entities اللي فيها IsDeleted
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())

@@ -280,7 +280,7 @@ namespace Application.Implementation.SystemInventory
                 .ToListAsync();
 
             var totalSales = await transactionsQuery.SumAsync(x => (decimal?)x.TotalAmount) ?? 0;
-
+            var totalPaid = await transactionsQuery.SumAsync(x => (decimal?)x.AmountPaid) ?? 0;
 
             // --- Fetch filtered expenses ---
             var expensesQuery = _unit.MerchantExpense.All
@@ -302,6 +302,7 @@ namespace Application.Implementation.SystemInventory
                 MerchantId = merchant.Id,
                 MerchantName = merchant.Name,
                 TotalSales = totalSales,
+                TotalPaid = totalPaid,
                 TotalExpenses = totalExpenses,
                 Transactions = transactions,
                 MerchantExpenses = expenses

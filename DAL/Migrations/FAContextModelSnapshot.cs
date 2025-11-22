@@ -66,7 +66,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Contact");
+                    b.ToTable("Contact", (string)null);
                 });
 
             modelBuilder.Entity("AppModels.Entities.Employees.Employee", b =>
@@ -106,7 +106,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Employees");
+                    b.ToTable("Employees", (string)null);
                 });
 
             modelBuilder.Entity("AppModels.Entities.Employees.EmployeeCashAdvance", b =>
@@ -144,7 +144,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.ToTable("EmployeeCashAdvance");
+                    b.ToTable("EmployeeCashAdvance", (string)null);
                 });
 
             modelBuilder.Entity("AppModels.Entities.Employees.EmployeeMonthlyPayroll", b =>
@@ -190,7 +190,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.ToTable("EmployeeMonthlyPayroll");
+                    b.ToTable("EmployeeMonthlyPayroll", (string)null);
                 });
 
             modelBuilder.Entity("AppModels.Entities.Employees.EmployeePersonalExpense", b =>
@@ -228,7 +228,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.ToTable("EmployeePersonalExpense");
+                    b.ToTable("EmployeePersonalExpense", (string)null);
                 });
 
             modelBuilder.Entity("AppModels.Entities.Equipments.Equipment", b =>
@@ -272,7 +272,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Equipments");
+                    b.ToTable("Equipments", (string)null);
                 });
 
             modelBuilder.Entity("AppModels.Entities.Equipments.EquipmentExpense", b =>
@@ -313,7 +313,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("EquipmentId");
 
-                    b.ToTable("EquipmentExpense");
+                    b.ToTable("EquipmentExpense", (string)null);
                 });
 
             modelBuilder.Entity("AppModels.Entities.Equipments.EquipmentIncome", b =>
@@ -354,7 +354,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("EquipmentId");
 
-                    b.ToTable("EquipmentIncome");
+                    b.ToTable("EquipmentIncome", (string)null);
                 });
 
             modelBuilder.Entity("AppModels.Entities.Financing", b =>
@@ -392,7 +392,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Financing");
+                    b.ToTable("Financing", (string)null);
                 });
 
             modelBuilder.Entity("AppModels.Entities.MaterialType", b =>
@@ -430,7 +430,7 @@ namespace DAL.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("MaterialTypes");
+                    b.ToTable("MaterialTypes", (string)null);
                 });
 
             modelBuilder.Entity("AppModels.Entities.MerchantMangement.Merchant", b =>
@@ -475,7 +475,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Merchants");
+                    b.ToTable("Merchants", (string)null);
                 });
 
             modelBuilder.Entity("AppModels.Entities.MerchantMangement.MerchantExpense", b =>
@@ -517,7 +517,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("MerchantId");
 
-                    b.ToTable("MerchantExpense");
+                    b.ToTable("MerchantExpense", (string)null);
                 });
 
             modelBuilder.Entity("AppModels.Entities.Store.Warehouse", b =>
@@ -559,7 +559,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Warehouses");
+                    b.ToTable("Warehouses", (string)null);
                 });
 
             modelBuilder.Entity("AppModels.Entities.Store.WarehouseExpense", b =>
@@ -598,7 +598,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("WarehouseId");
 
-                    b.ToTable("WarehouseExpense");
+                    b.ToTable("WarehouseExpense", (string)null);
                 });
 
             modelBuilder.Entity("AppModels.Entities.Store.WarehouseInventory", b =>
@@ -640,7 +640,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("WarehouseId");
 
-                    b.ToTable("WarehouseInventory");
+                    b.ToTable("WarehouseInventory", (string)null);
                 });
 
             modelBuilder.Entity("AppModels.Entities.Transaction", b =>
@@ -725,7 +725,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("WarehouseId");
 
-                    b.ToTable("Transactions");
+                    b.ToTable("Transactions", (string)null);
                 });
 
             modelBuilder.Entity("DAL.ApplicationUser", b =>
