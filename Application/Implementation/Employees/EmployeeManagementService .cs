@@ -4,7 +4,6 @@ using AppModels.Entities.Employees;
 using AppModels.Models.Employees;
 using AutoMapper;
 using DAL;
-using DAL.Interface;
 using Ejd.GRC.AppModels.Common;
 using Microsoft.EntityFrameworkCore;
 
@@ -66,22 +65,26 @@ namespace Application.Implementation.Employees
         // ============================================================
         // 📋 جلب الموظفين مع التصفية Pagination
         // ============================================================
-        public async Task<IEnumerable<EmployeeDto>> GetAllEmployeesAsync(PaginationEntity param)
+        public async Task<PagedResult<IEnumerable<EmployeeDto>>> GetAllEmployeesAsync(PaginationEntity param)
         {
             if (param == null)
                 throw new ArgumentNullException(nameof(param), "معايير البحث غير موجودة.");
 
-            // افتراضياً نستخدم DbSet<Employee> من الوحدة UnitOfWork أو DbContext
             var query = _unit.Employees.All
-                .OrderByDescending(e => e.StartDate); // ترتيب افتراضي حسب تاريخ بداية العمل
+                .OrderByDescending(e => e.StartDate); 
+
+            var totalCount = query.Count();
 
             var items = await query
                 .Skip((param.PageIndex - 1) * param.PageSize)
                 .Take(param.PageSize)
                 .ToListAsync();
 
-            return items == null ? Enumerable.Empty<EmployeeDto>()
-                                 : _mapper.Map<IEnumerable<EmployeeDto>>(items);
+            return new PagedResult<IEnumerable<EmployeeDto>>()
+            {
+                TotalCount = items.Count,
+                Data = _mapper.Map<IEnumerable<EmployeeDto>>(items)
+            };
         }
 
         public async Task<Guid> AddEmployeeAsync(EmployeeDto dto)
@@ -130,7 +133,6 @@ namespace Application.Implementation.Employees
         public async Task<IEnumerable<EmployeeDto>> GetAllEmployeesAsync()
         {
             var list = await _unit.Employees.All
-                .Where(x => !x.IsDeleted)
                 .AsNoTracking()
                 .ToListAsync();
 
@@ -160,7 +162,7 @@ namespace Application.Implementation.Employees
                 return true;
             });
 
-        public async Task<PagedResult<EmployeeCashAdvanceDto>> GetCashAdvancesAsync(Guid employeeId, PaginationEntity param)
+        public async Task<PagedResult<IEnumerable<EmployeeCashAdvanceDto>>> GetCashAdvancesAsync(Guid employeeId, PaginationEntity param)
         {
             var query = _unit.EmployeeCashAdvance.All
                 .Where(x => x.EmployeeId == employeeId)
@@ -176,7 +178,7 @@ namespace Application.Implementation.Employees
                 .Take(param.PageSize)
                 .ToListAsync();
 
-            return new PagedResult<EmployeeCashAdvanceDto>
+            return new PagedResult<IEnumerable<EmployeeCashAdvanceDto>>
             {
                 TotalCount = totalCount,
                 Data = _mapper.Map<IEnumerable<EmployeeCashAdvanceDto>>(list)
@@ -220,19 +222,25 @@ namespace Application.Implementation.Employees
                 return true;
             });
 
-        public async Task<IEnumerable<EmployeePersonalExpenseDto>> GetPersonalExpensesAsync(Guid employeeId, PaginationEntity param)
+        public async Task<PagedResult<IEnumerable<EmployeePersonalExpenseDto>>> GetPersonalExpensesAsync(Guid employeeId, PaginationEntity param)
         {
             var query = _unit.EmployeePersonalExpense.All
                 .Where(x => x.EmployeeId == employeeId)
                 .AsNoTracking()
                 .OrderByDescending(x => x.CreateDate);
 
+            var totalCount = await query.CountAsync();
+
             var list = await query
                 .Skip((param.PageIndex - 1) * param.PageSize)
                 .Take(param.PageSize)
                 .ToListAsync();
 
-            return _mapper.Map<IEnumerable<EmployeePersonalExpenseDto>>(list);
+            return new PagedResult<IEnumerable<EmployeePersonalExpenseDto>>()
+            {
+                Data = _mapper.Map<IEnumerable<EmployeePersonalExpenseDto>>(list),
+                TotalCount = totalCount
+            };
         }
 
         public async Task<bool> UpdatePersonalExpenseAsync(EmployeePersonalExpenseDto dto)

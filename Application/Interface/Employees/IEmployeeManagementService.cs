@@ -20,18 +20,18 @@ namespace Application.Interface.Employees
         Task<bool> DeleteEmployeeAsync(Guid id);
         Task<EmployeeDto?> GetEmployeeByIdAsync(Guid id);
         Task<IEnumerable<EmployeeDto>> GetAllEmployeesAsync();
-        Task<IEnumerable<EmployeeDto>> GetAllEmployeesAsync(PaginationEntity param);
+        Task<PagedResult<IEnumerable<EmployeeDto>>> GetAllEmployeesAsync(PaginationEntity param);
 
         // Cash advance operations
         Task<Guid> AddCashAdvanceAsync(EmployeeCashAdvanceDto dto);
         Task<bool> DeleteCashAdvanceAsync(Guid id);
-        Task<PagedResult<EmployeeCashAdvanceDto>> GetCashAdvancesAsync(Guid employeeId, PaginationEntity param);
+        Task<PagedResult<IEnumerable<EmployeeCashAdvanceDto>>> GetCashAdvancesAsync(Guid employeeId, PaginationEntity param);
         Task<bool> UpdateEmployeeCashAdvanceAsync(EmployeeCashAdvanceDto dto);
 
         // Personal expense operations
         Task<Guid> AddPersonalExpenseAsync(EmployeePersonalExpenseDto dto);
         Task<bool> DeletePersonalExpenseAsync(Guid id);
-        Task<IEnumerable<EmployeePersonalExpenseDto>> GetPersonalExpensesAsync(Guid employeeId, PaginationEntity param);
+        Task<PagedResult<IEnumerable<EmployeePersonalExpenseDto>>> GetPersonalExpensesAsync(Guid employeeId, PaginationEntity param);
         Task<bool> UpdatePersonalExpenseAsync(EmployeePersonalExpenseDto dto);
     }
 }

@@ -189,7 +189,6 @@ namespace Application
             services.AddScoped<IEquipmentIncomeRepository, EquipmentIncomeRepository>();
 
             services.AddScoped<IFinancingRepository, FinancingRepository>();
-            services.AddScoped<IMerchantExpenseRepository, MerchantExpenseRepository>();
             return services;
         }
     }

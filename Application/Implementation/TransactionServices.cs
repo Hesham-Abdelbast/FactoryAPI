@@ -9,6 +9,7 @@ using DAL;
 using Ejd.GRC.AppModels.Common;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Application.Implementation
 {
@@ -26,7 +27,7 @@ namespace Application.Implementation
         // ============================================================
         // البحث عن معاملة
         // ============================================================
-        public async Task<PagedResult<TransactionDto?>> SearchAsync(TxnSearchDto searchDto)
+        public async Task<PagedResult<IEnumerable<TransactionDto>>> SearchAsync(TxnSearchDto searchDto)
         {
             
             
@@ -41,11 +42,10 @@ namespace Application.Implementation
                 .Include(x => x.Warehouse)
                 .AsQueryable();
 
-            query = query.Where(x=>x.Merchant.IsDeleted == false);
-            query = query.Where(x=>x.MaterialType.IsDeleted == false);
-            query = query.Where(x=>x.Warehouse.IsDeleted == false);
+            query = query.Where(x => x.Merchant.IsDeleted == false);
+            query = query.Where(x => x.MaterialType.IsDeleted == false);
+            query = query.Where(x => x.Warehouse.IsDeleted == false);
 
-            
             // ===============================
             // 🔍 Apply dynamic filters
             // ===============================
@@ -105,7 +105,7 @@ namespace Application.Implementation
                 .ToListAsync();
 
 
-            return new PagedResult<TransactionDto?>
+            return new PagedResult<IEnumerable<TransactionDto>>
             {
                 TotalCount = totalCount,
                 Data = _mapper.Map<IEnumerable<TransactionDto>>(result)
@@ -216,7 +216,7 @@ namespace Application.Implementation
         // ============================================================
         // 📋 جلب كل المعاملات
         // ============================================================
-        public async Task<PagedResult<TransactionDto>> GetAllAsync(PaginationEntity param)
+        public async Task<PagedResult<IEnumerable<TransactionDto>>> GetAllAsync(PaginationEntity param)
         {
             var query = _unitOfWork.Transaction.All.Include(x=>x.MaterialType).Include(x => x.Merchant).Include(x=>x.Warehouse);
 
@@ -227,7 +227,7 @@ namespace Application.Implementation
                 .Take(param.PageSize)
                 .ToListAsync();
 
-            return new PagedResult<TransactionDto>()
+            return new PagedResult<IEnumerable<TransactionDto>>()
             {
                 TotalCount = totalCount,
                 Data = _mapper.Map<IEnumerable<TransactionDto>>(items)
@@ -236,28 +236,47 @@ namespace Application.Implementation
         // ============================================================
         // 📋 جلب كل المعاملات بناءً على معرف التاجر
         // ============================================================
-        public async Task<AllTransByMerchantDto> GetAllByMerchantIdAsync(Guid merchantId)
+        public async Task<PagedResult<AllTransByMerchantDto>> GetAllByMerchantIdAsync(Guid merchantId,PaginationEntity param)
         {
-            var entities = await _unitOfWork.Transaction.All
+            var entities = _unitOfWork.Transaction.All
                 .Where(tr => tr.MerchantId == merchantId)
-                .Include(x=>x.MaterialType)
+                .Include(x => x.MaterialType)
                 .Include(x => x.Merchant)
                 .Include(x => x.Warehouse)
-                .ToListAsync();
+                .AsQueryable();
+
+            entities = entities.Where(x=>x.Merchant.IsDeleted==false);
+            entities = entities.Where(x=>x.MaterialType.IsDeleted==false);
+            entities = entities.Where(x=>x.Warehouse.IsDeleted==false);
+            var totalCount = entities.Count();
+            // ===============================
+            // 📄 Pagination
+            // ===============================
+            int skip = (param.PageIndex - 1) * param.PageSize;
+            entities = entities
+                .Skip(skip)
+                .Take(param.PageSize);
+
+            var res =  await entities.ToListAsync();
+
             var resulat = new AllTransByMerchantDto
             {
-                Transactions = _mapper.Map<List<TransactionDto>>(entities),
-                TotalMoneyProcessed = entities.Sum(e => e.TotalAmount),
-                TotalMoneypay = entities.Sum(e => e.AmountPaid),
-                TotalImpurities = entities.Sum(e => e.WeightOfImpurities),
-                TotalWight = entities.Sum(e => e.Quantity)
+                Transactions = _mapper.Map<List<TransactionDto>>(res),
+                TotalMoneyProcessed = res.Sum(e => e.TotalAmount),
+                TotalMoneypay = res.Sum(e => e.AmountPaid),
+                TotalImpurities = res.Sum(e => e.WeightOfImpurities),
+                TotalWight = res.Sum(e => e.Quantity)
             };
-            return resulat;
+            return new PagedResult<AllTransByMerchantDto>
+            {
+                Data = resulat,
+                TotalCount = totalCount
+            };
         }
 
         // ============================================================
         // 🔍 التأكد من وجود معاملة برقم معين
-        // ============================================================
+        // ============================================================   
         public async Task<bool> ExistsAsync(Guid id)
         {
             return await _unitOfWork.Transaction.FindAsync(id) != null;
@@ -314,9 +333,7 @@ namespace Application.Implementation
             return invoiceDto;
         }
 
-
         #region Private Methods
-
 
         // ============================================================
         // 🔧 تعديل المخزون بعد إضافة معاملة جديدة

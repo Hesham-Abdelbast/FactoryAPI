@@ -114,7 +114,7 @@ namespace Application.Implementation.MerchantMangement
             return _mapper.Map<IEnumerable<MerchantDto>>(list);
         }
 
-        public async Task<PagedResult<MerchantDto>> GetAllAsync(PaginationEntity param)
+        public async Task<PagedResult<IEnumerable<MerchantDto>>> GetAllAsync(PaginationEntity param)
         {
             var query = _unit.Merchant.All;
 
@@ -133,7 +133,7 @@ namespace Application.Implementation.MerchantMangement
                 .ProjectTo<MerchantDto>(_mapper.ConfigurationProvider) // Efficient: projection in DB
                 .ToListAsync();
 
-            return new PagedResult<MerchantDto>
+            return new PagedResult<IEnumerable<MerchantDto>>
             {
                 Data = merchants,
                 TotalCount = totalCount,

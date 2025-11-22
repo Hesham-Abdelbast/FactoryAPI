@@ -9,8 +9,8 @@ namespace Application.Interface
     {
         // Create
         Task<Guid> AddAsync(CreateTransactionDto entity);
-        Task<PagedResult<TransactionDto?>> SearchAsync(TxnSearchDto searchDto);
-        Task<AllTransByMerchantDto> GetAllByMerchantIdAsync(Guid merchantId);
+        Task<PagedResult<IEnumerable<TransactionDto>?>> SearchAsync(TxnSearchDto searchDto);
+        Task<PagedResult<AllTransByMerchantDto>> GetAllByMerchantIdAsync(Guid merchantId, PaginationEntity param);
 
         // Read (Get by Id)
         Task<TransactionDto?> GetByIdAsync(Guid id);
@@ -19,7 +19,7 @@ namespace Application.Interface
         Task<InvoiceDto?> GetInvoiceByIdAsync(Guid id);
 
         // Read (Get all)
-        Task<PagedResult<TransactionDto>> GetAllAsync(PaginationEntity param);
+        Task<PagedResult<IEnumerable<TransactionDto>>> GetAllAsync(PaginationEntity param);
 
         // Update
         Task<bool> UpdateAsync(CreateTransactionDto entity);

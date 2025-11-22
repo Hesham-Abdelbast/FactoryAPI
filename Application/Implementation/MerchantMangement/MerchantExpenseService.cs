@@ -40,7 +40,7 @@ namespace Application.Implementation.MerchantMangement
                                  : _mapper.Map<IEnumerable<MerchantExpenseDto>>(items);
         }
 
-        public async Task<PagedResult<MerchantExpenseDto>> GetAllByMerchantIdAsync(Guid merchantId,PaginationEntity param)
+        public async Task<PagedResult<IEnumerable<MerchantExpenseDto>>> GetAllByMerchantIdAsync(Guid merchantId,PaginationEntity param)
         {
             if (param == null) throw new ArgumentNullException(nameof(param), "معايير البحث غير موجودة.");
 
@@ -54,7 +54,7 @@ namespace Application.Implementation.MerchantMangement
                 .Skip((param.PageIndex - 1) * param.PageSize)
                 .Take(param.PageSize)
                 .ToListAsync();
-            return new PagedResult<MerchantExpenseDto>()
+            return new PagedResult<IEnumerable<MerchantExpenseDto>>()
             {
                 Data = items == null ? Enumerable.Empty<MerchantExpenseDto>()
                                  : _mapper.Map<IEnumerable<MerchantExpenseDto>>(items),

@@ -1,6 +1,7 @@
 ﻿using Application.Interface.SystemInventory;
 using AppModels.Common;
 using AppModels.Models.Employees;
+using AppModels.Models.MerchantMangement;
 using AppModels.Models.SystemInventory;
 using Microsoft.AspNetCore.Mvc;
 
@@ -115,6 +116,63 @@ namespace FactoryAPI.Controllers
             }
         }
 
+        // ======================================================================
+        // 📊 تقرير المخزون والمعاملات للتاجر بناءً على التاريخ
+        // ======================================================================
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<TResponse<MerchantInventoryResultDto>>> GetMerchantInventory(Guid merchantId, DateTime from, DateTime to)
+        {
+            try
+            {
+                if (merchantId == Guid.Empty)
+                {
+                    return Ok(new TResponse<MerchantInventoryResultDto>
+                    {
+                        Success = false,
+                        ReturnMsg = "يجب ادخال معرف التاجر."
+                    });
+                }
+
+                if (from == default || to == default)
+                {
+                    return Ok(new TResponse<MerchantInventoryResultDto>
+                    {
+                        Success = false,
+                        ReturnMsg = "⚠️ التاريخ مطلوب ولا يمكن أن يكون فارغًا."
+                    });
+                }
+
+                if (from > to)
+                {
+                    return Ok(new TResponse<MerchantInventoryResultDto>
+                    {
+                        Success = false,
+                        ReturnMsg = "❌ تاريخ البداية لا يمكن أن يكون أكبر من تاريخ النهاية."
+                    });
+                }
+
+                var result = await services.GetMerchantInventoryAsync(merchantId, from, to);
+
+                return Ok(new TResponse<MerchantInventoryResultDto>
+                {
+                    Success = true,
+                    ReturnMsg = "📄 تم إنشاء التقرير بنجاح.",
+                    Data = result
+                });
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"{GetType().Name}.{nameof(GetMerchantInventory)}");
+
+                return Ok(new TResponse<MerchantInventoryResultDto>
+                {
+                    Success = false,
+                    ReturnMsg = "حدث خطأ أثناء إنشاء التقرير: " + ex.Message
+                });
+            }
+        }
+    
 
         // ======================================================================
         // 📦 تقرير العمليات بناءً على قائمة معرفات المعاملات (Ids)

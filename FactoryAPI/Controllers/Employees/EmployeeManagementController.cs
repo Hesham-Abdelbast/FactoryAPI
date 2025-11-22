@@ -30,7 +30,7 @@ namespace FactoryAPI.Controllers.Employees
                 if (employees == null)
                     return NotFound("لم يتم العثور على موظفين.");
 
-                return Ok(new TResponse<IEnumerable<EmployeeDto>> { Success = true, Data = employees });
+                return Ok(new TResponse<IEnumerable<EmployeeDto>> { Success = true, Data = employees.Data,TotalCount=employees.TotalCount });
             }
             catch (Exception ex)
             {
@@ -229,7 +229,7 @@ namespace FactoryAPI.Controllers.Employees
             try
             {
                 var result = await service.GetPersonalExpensesAsync(employeeId, param);
-                return Ok(new TResponse<IEnumerable<EmployeePersonalExpenseDto>> { Success = true, Data = result });
+                return Ok(new TResponse<IEnumerable<EmployeePersonalExpenseDto>> { Success = true, Data = result.Data,TotalCount = result.TotalCount });
             }
             catch (Exception ex)
             {
