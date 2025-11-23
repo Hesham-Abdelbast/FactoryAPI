@@ -126,7 +126,8 @@ namespace Application.Implementation
                 var transaction = _mapper.Map<Transaction>(entity);
 
                 // تعيين معرف فريد للمعاملة
-                transaction.TransactionIdentifier = $"TXN-{DateTime.UtcNow:yyyyMMddHHmmssfff}-{Guid.NewGuid().ToString().Substring(0, 3).ToUpper()}";
+                var count = await _unitOfWork.Transaction.All.CountAsync();
+                transaction.TransactionIdentifier = $"TRX-{DateTime.UtcNow.Year}-{count}";
 
                 await _unitOfWork.Transaction.InsertAsync(transaction);
                 await _unitOfWork.SaveChangesAsync();
@@ -170,7 +171,11 @@ namespace Application.Implementation
                 _mapper.Map(entity, existing);
                 // تعيين معرف فريد للمعاملة
                 if (string.IsNullOrWhiteSpace(existing.TransactionIdentifier))
-                    existing.TransactionIdentifier = $"TXN-{DateTime.UtcNow:yyyyMMddHHmmssfff}-{Guid.NewGuid().ToString().Substring(0, 3).ToUpper()}";
+                {
+                    // تعيين معرف فريد للمعاملة
+                    var count = await _unitOfWork.Transaction.All.CountAsync();
+                    existing.TransactionIdentifier = $"TRX-{DateTime.UtcNow.Year}-{count}";
+                }
                 _unitOfWork.Transaction.Update(existing);
                 await _unitOfWork.SaveChangesAsync();
 
