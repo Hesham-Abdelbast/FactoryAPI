@@ -142,7 +142,7 @@ namespace Application.Implementation.SystemInventory
 
             // ⚠ اكتشاف العمليات الشاذة (فرق بين الوزن المتوقع والفعلي)
             var anomalies = await baseQuery
-                .Where(t => t.CarAndMatrerialWeight - t.CarWeight - t.WeightOfImpurities != t.Quantity)
+                .Where(t => t.CarAndMatrerialWeight - t.CarWeight - t.WeightOfImpurities != t.Quantity || t.PricePerUnit > (decimal)2.5 && t.PricePerUnit < (decimal)0.4)
                 .Select(t => new AnomalyDto
                 {
                     TransactionId = t.Id,
