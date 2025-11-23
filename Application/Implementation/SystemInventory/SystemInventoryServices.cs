@@ -139,10 +139,16 @@ namespace Application.Implementation.SystemInventory
             var fullyPaidCount = baseQuery.AsEnumerable().Where(t => t.TotalAmount - t.AmountPaid <= 0).Count();
             var unpaidCount = baseQuery.AsEnumerable().Where(t => t.TotalAmount - t.AmountPaid > 0).Count();
             var totalRemainingAmount = await baseQuery.Select(t => (decimal?)(t.TotalAmount - t.AmountPaid)).SumAsync() ?? 0m;
+            // Thresholds
+            decimal lowPriceThreshold = 0.4m;
+            decimal highPriceThreshold = 2.5m;
 
             // ⚠ اكتشاف العمليات الشاذة (فرق بين الوزن المتوقع والفعلي)
             var anomalies = await baseQuery
-                .Where(t => t.CarAndMatrerialWeight - t.CarWeight - t.WeightOfImpurities != t.Quantity || t.PricePerUnit > (decimal)2.5 && t.PricePerUnit < (decimal)0.4)
+                .Where(t =>
+                    (t.CarAndMatrerialWeight - t.CarWeight - t.WeightOfImpurities) != t.Quantity
+                    || (t.PricePerUnit < lowPriceThreshold || t.PricePerUnit > highPriceThreshold)
+                )
                 .Select(t => new AnomalyDto
                 {
                     TransactionId = t.Id,
