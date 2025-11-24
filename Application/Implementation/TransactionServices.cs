@@ -93,7 +93,7 @@ namespace Application.Implementation
             // 📄 Pagination
             // ===============================
             int skip = (searchDto.PageIndex - 1) * searchDto.PageSize;
-            query = query
+            query = query.OrderByDescending(x => x.CreateDate)
                 .Skip(skip)
                 .Take(searchDto.PageSize);
 
