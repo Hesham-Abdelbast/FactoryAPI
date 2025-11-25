@@ -1,4 +1,5 @@
 ﻿using DAL.Interface;
+using DAL.Interface.Drivers;
 using DAL.Interface.Employees;
 using DAL.Interface.Equipments;
 using DAL.Interface.MerchantMangement;
@@ -37,7 +38,11 @@ namespace DAL
         public IEquipmentIncomeRepository EquipmentIncome { get; set; }
 
         public IFinancingRepository Financing { get; set; }
-        
+
+        //Driver info
+        public IDriverRepository Driver { get; set; }
+        public IDriverExpenseRepository DriverExpense { get; set; }
+        public ITravelRepository Travel { get; set; }
         #endregion
     }
 }

@@ -274,9 +274,10 @@ namespace Application.Implementation.SystemInventory
             if (merchant == null)
                 throw new Exception("⚠ التاجر غير موجود.");
 
-            // --- Fetch filtered transactions ---
+            // --- Fetch filtered transactions Income ---
             var transactionsQuery = _unit.Transaction.All 
-                .Where(x => x.MerchantId == merchantId &&
+                .Where(x => x.MerchantId == merchantId && 
+                            x.Type == TransactionType.Income &&
                             x.CreateDate >= from &&
                             x.CreateDate <= to);
 

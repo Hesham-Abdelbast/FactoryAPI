@@ -1,4 +1,5 @@
 ﻿using AppModels.Entities;
+using AppModels.Entities.Drivers;
 using AppModels.Entities.Employees;
 using AppModels.Entities.Equipments;
 using AppModels.Entities.MerchantMangement;
@@ -34,6 +35,10 @@ namespace DAL.Extensions
             modelBuilder.Entity<EquipmentIncome>().HasQueryFilter(e => !e.IsDeleted);
 
             modelBuilder.Entity<Financing>().HasQueryFilter(e => !e.IsDeleted);
+
+            modelBuilder.Entity<Driver>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<DriverExpense>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<Travel>().HasQueryFilter(e => !e.IsDeleted);
 
             // تطبيق تلقائي لكل الـ entities اللي فيها IsDeleted
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())

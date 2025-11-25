@@ -1,10 +1,12 @@
 ﻿using DAL;
 using DAL.Implementation;
+using DAL.Implementation.Drivers;
 using DAL.Implementation.Employees;
 using DAL.Implementation.Equipments;
 using DAL.Implementation.MerchantMangement;
 using DAL.Implementation.Store;
 using DAL.Interface;
+using DAL.Interface.Drivers;
 using DAL.Interface.Employees;
 using DAL.Interface.Equipments;
 using DAL.Interface.MerchantMangement;
@@ -189,6 +191,11 @@ namespace Application
             services.AddScoped<IEquipmentIncomeRepository, EquipmentIncomeRepository>();
 
             services.AddScoped<IFinancingRepository, FinancingRepository>();
+
+            services.AddScoped<IDriverRepository, DriverRepository>();
+            services.AddScoped<IDriverExpenseRepository, DriverExpenseRepository>();
+            services.AddScoped<ITravelRepository, TravelRepository>();
+
             return services;
         }
     }

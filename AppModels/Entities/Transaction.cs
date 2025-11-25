@@ -19,6 +19,10 @@ namespace AppModels.Entities
         /// </summary>
         [Required]
         public TransactionType Type { get; set; }
+        /// <summary>
+        /// Only Input when the transaction is Outcome
+        /// </summary>
+        public decimal? PricePerSelling { get; set; }
 
         /// <summary>
         /// Foreign key for the material type involved in the transaction
