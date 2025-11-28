@@ -1,5 +1,6 @@
 ﻿using Application.Implementation;
 using Application.Implementation.Auth;
+using Application.Implementation.Drivers;
 using Application.Implementation.Employees;
 using Application.Implementation.Equipments;
 using Application.Implementation.MerchantMangement;
@@ -7,6 +8,7 @@ using Application.Implementation.Store;
 using Application.Implementation.SystemInventory;
 using Application.Interface;
 using Application.Interface.Auth;
+using Application.Interface.Drivers;
 using Application.Interface.Employees;
 using Application.Interface.Equipments;
 using Application.Interface.MerchantMangement;
@@ -50,6 +52,8 @@ namespace Application
             services.AddScoped<IEmployeeManagementService,EmployeeManagementService>();
             services.AddScoped<IEquipmentManagementService,EquipmentManagementService>();
             services.AddScoped<ISystemInventoryServices, SystemInventoryServices>();
+
+            services.AddScoped<IDriverService, DriverService>();
 
             return services;
         }

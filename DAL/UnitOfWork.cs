@@ -1,4 +1,5 @@
 ﻿using DAL.Interface;
+using DAL.Interface.Drivers;
 using DAL.Interface.Employees;
 using DAL.Interface.Equipments;
 using DAL.Interface.MerchantMangement;
@@ -16,6 +17,7 @@ namespace DAL
 
         public IMaterialTypeRepository MaterialType { get; set; }
         public IMerchantRepository Merchant { get; set; }
+        public IMerchantExpenseRepository MerchantExpense { get; set; }
         public ITransactionRepository Transaction { get; set; }
         public IContactRepository Contact { get; set; }
 
@@ -33,7 +35,11 @@ namespace DAL
         public IEquipmentIncomeRepository EquipmentIncome { get; set; }
 
         public IFinancingRepository Financing { get; set; }
-        public IMerchantExpenseRepository MerchantExpense { get; set; }
+
+        //Driver info
+        public IDriverRepository Driver { get; set; }
+        public IDriverExpenseRepository DriverExpense { get; set; }
+        public ITravelRepository Travel { get; set; }
         public UnitOfWork(
             FAContext dbContext,
             ILogger<UnitOfWork> logger,
@@ -54,7 +60,10 @@ namespace DAL
             IEquipmentExpenseRepository equipmentExpenseRepository,
             IEquipmentIncomeRepository equipmentIncomeRepository,
             IFinancingRepository financing,
-            IMerchantExpenseRepository merchantExpenseRepository)
+            IMerchantExpenseRepository merchantExpenseRepository,
+            ITravelRepository travel,
+            IDriverExpenseRepository driverExpense,
+            IDriverRepository driver)
         {
             _dbContext = dbContext;
             _logger = logger;
@@ -77,6 +86,10 @@ namespace DAL
             EquipmentIncome = equipmentIncomeRepository;
             Financing = financing;
             MerchantExpense = merchantExpenseRepository;
+
+            Driver = driver;
+            DriverExpense = driverExpense;
+            Travel = travel;
         }
 
         public void Dispose()
