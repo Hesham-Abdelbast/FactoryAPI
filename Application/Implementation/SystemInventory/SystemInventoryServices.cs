@@ -8,7 +8,6 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using DAL;
 using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Application.Implementation.SystemInventory
 {

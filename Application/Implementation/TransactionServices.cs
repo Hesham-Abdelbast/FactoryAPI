@@ -53,6 +53,16 @@ namespace Application.Implementation
             if (!string.IsNullOrWhiteSpace(searchDto.MerchantName))
                 query = query.Where(x => x.Merchant != null && x.Merchant.Name.Contains(searchDto.MerchantName));
 
+            if(searchDto.NeedAll == false)
+            {
+                var keyword = "حديد";
+
+                if (searchDto.IsIron == true)
+                    query = query.Where(x => x.MaterialType != null && x.MaterialType.Name.Contains(keyword));
+                else
+                    query = query.Where(x => x.MaterialType != null && !x.MaterialType.Name.Contains(keyword));
+            }
+
             if (!string.IsNullOrWhiteSpace(searchDto.MaterialTypeName))
                 query = query.Where(x => x.MaterialType != null && x.MaterialType.Name.Contains(searchDto.MaterialTypeName));
 

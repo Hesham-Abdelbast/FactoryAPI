@@ -12,5 +12,7 @@ namespace AppModels.Models.Search
         public string? WarehouseName { get; set; }
         public bool? IsUnPaid { get; set; }
         public bool? IsPaid { get; set; }
+        public bool? NeedAll { get; set; }
+        public bool? IsIron { get; set; }
     }
 }
