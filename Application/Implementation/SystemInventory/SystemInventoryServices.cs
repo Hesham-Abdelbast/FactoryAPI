@@ -23,11 +23,11 @@ namespace Application.Implementation.SystemInventory
         }
 
         // 🔹 هذه الدالة تقوم بإنشاء تقرير كامل عن حركة المعاملات خلال فترة زمنية
-        public async Task<TrnxReportDto> GetTrnxReportAsync(DateTime from, DateTime to)
+        public async Task<TrnxReportDto> GetTrnxReportAsync(TrnxReportRequestDto trnxDto)
         {
             // 🎯 ضبط التاريخ ليشمل اليوم بالكامل (من بداية اليوم إلى نهايته)
-            var fromDate = from.Date;
-            var toDate = to.Date.AddDays(1).AddTicks(-1);
+            var fromDate = trnxDto.From.Date;
+            var toDate = trnxDto.To.Date.AddDays(1).AddTicks(-1);
 
             // 🧾 بناء الاستعلام الأساسي، مع تضمين البيانات اللازمة (مادة - تاجر - مخزن)
             var baseQuery = _unit.Transaction
@@ -36,6 +36,13 @@ namespace Application.Implementation.SystemInventory
                 .Include(t => t.Merchant)
                 .Include(t => t.Warehouse)
                 .Where(t => t.CreateDate >= fromDate && t.CreateDate <= toDate);
+
+            var res = baseQuery.Select(x => x.MaterialType.Type).ToList();
+
+            if (trnxDto.WarehouseId.HasValue && trnxDto.WarehouseId != Guid.Empty)
+                baseQuery = baseQuery.Where(x => x.WarehouseId == trnxDto.WarehouseId);
+            if (trnxDto.MaterialCategory.HasValue)
+                baseQuery = baseQuery.Where(x => x.MaterialType.Type == trnxDto.MaterialCategory);
 
             baseQuery = baseQuery.Where(x => x.Merchant.IsDeleted == false);
             baseQuery = baseQuery.Where(x => x.MaterialType.IsDeleted == false);
@@ -273,12 +280,17 @@ namespace Application.Implementation.SystemInventory
             if (merchant == null)
                 throw new Exception("⚠ التاجر غير موجود.");
 
-            // --- Fetch filtered transactions Income ---
+            // --- Fetch filtered transactions ---
             var transactionsQuery = _unit.Transaction.All 
                 .Where(x => x.MerchantId == merchantId && 
-                            x.Type == TransactionType.Income &&
                             x.CreateDate >= from &&
                             x.CreateDate <= to);
+
+            // Transction Income
+            var incomeTrnx = transactionsQuery.Where(x => x.Type == TransactionType.Income);
+
+            // Transction Outcome
+            var outcomeTrnx = transactionsQuery.Where(x => x.Type == TransactionType.Outcome);
 
             var transactions = await transactionsQuery
                 .OrderByDescending(x => x.CreateDate)

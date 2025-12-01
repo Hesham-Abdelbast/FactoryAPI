@@ -1,4 +1,5 @@
 ﻿using AppModels.Common;
+using AppModels.Common.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace AppModels.Entities
@@ -21,11 +22,12 @@ namespace AppModels.Entities
         [StringLength(200)]
         public string? Description { get; set; }
 
+        public MaterialCategory Type { get; set; }
+
         /// <summary>
         /// Navigation property for transactions involving this material type
         /// </summary>
         public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
 
-       
     }
 }

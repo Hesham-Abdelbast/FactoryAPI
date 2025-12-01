@@ -168,15 +168,32 @@ namespace DAL.Implementation
         {
             return await _dbSet.FindAsync(keys);
         }
+
+        /// <summary>
+        /// Find data object with it's keys
+        /// </summary>
+        /// <param name="keys">The primary key values of the data object</param>
+        /// <returns>The found data object </returns>
+        public async Task<TEntity?> FindAsync(CancellationToken cancellationToken = default, params object[] keys)
+        {
+            return await _dbSet.FindAsync(keys, cancellationToken);
+        }
         /// <summary>
         /// Insert new data objects into the data context
         /// </summary>
         /// <param name="entities">New data objects to insert into the data context </param>
-        public virtual async Task InsertAsync(params TEntity[] entities)
+        public virtual async Task InsertAsync( params TEntity[] entities)
         {
             await _dbSet.AddRangeAsync(entities);
         }
-
+        /// <summary>
+        /// Insert new data objects into the data context
+        /// </summary>
+        /// <param name="entities">New data objects to insert into the data context </param>
+        public virtual async Task InsertAsync(CancellationToken cancellationToken = default, params TEntity[] entities)
+        {
+            await _dbSet.AddRangeAsync(entities, cancellationToken);
+        }
         #endregion
     }
 }

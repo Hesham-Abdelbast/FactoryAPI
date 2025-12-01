@@ -1,14 +1,12 @@
-﻿using AppModels.Common;
-using AppModels.Common.Enums;
+﻿using AppModels.Entities.Drivers;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace AppModels.Entities.Drivers
+namespace AppModels.Models.Drivers
 {
-    public class DriverExpense : BaseEntity
+    public sealed class CreateDriverExpenseDto
     {
+        public Guid Id { get; set; }
         public Guid DriverId { get; set; }
-        [ForeignKey(nameof(DriverId))]
-        public Driver Driver { get; set; }
         public decimal Amount { get; set; }
         public string? Notes { get; set; }
         public DateTime ExpenseDate { get; set; }

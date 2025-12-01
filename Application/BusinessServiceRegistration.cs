@@ -53,7 +53,7 @@ namespace Application
             services.AddScoped<IEquipmentManagementService,EquipmentManagementService>();
             services.AddScoped<ISystemInventoryServices, SystemInventoryServices>();
 
-            services.AddScoped<IDriverService, DriverService>();
+            services.AddScoped<IDriverManagementService, DriverManagementService>();
 
             return services;
         }

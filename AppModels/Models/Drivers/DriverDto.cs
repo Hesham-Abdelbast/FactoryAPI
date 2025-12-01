@@ -7,5 +7,6 @@
         public string? PhoneNumber { get; set; }
         public string? LicenseNumber { get; set; }
         public DateTime LicenseExpiry { get; set; }
+        public decimal MoneyBalance { get; set; } = 0m;
     }
 }

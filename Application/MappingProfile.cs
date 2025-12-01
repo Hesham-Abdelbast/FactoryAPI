@@ -1,11 +1,13 @@
 ﻿using AppModels.Common;
 using AppModels.Entities;
+using AppModels.Entities.Drivers;
 using AppModels.Entities.Employees;
 using AppModels.Entities.Equipments;
 using AppModels.Entities.MerchantMangement;
 using AppModels.Entities.Store;
 using AppModels.Models;
 using AppModels.Models.Auth;
+using AppModels.Models.Drivers;
 using AppModels.Models.Employees;
 using AppModels.Models.Equipments;
 using AppModels.Models.MerchantMangement;
@@ -90,6 +92,16 @@ namespace Application
 
             _ = CreateMap<FinancingDto, Financing>().ReverseMap();
             _ = CreateMap<FinancingCreateDto, Financing>().ReverseMap();
+
+            //Drivers Dtos
+            _ = CreateMap<CreateDriverDto, Driver>().ReverseMap();
+            _ = CreateMap<DriverDto, Driver>().ReverseMap();
+
+            _ = CreateMap<CreateTravelDto, Travel>().ReverseMap();
+            _ = CreateMap<TravelDto, Travel>().ReverseMap();
+
+            _ = CreateMap<DriverExpenseDto, DriverExpense>().ReverseMap();
+            _ = CreateMap<CreateDriverExpenseDto, DriverExpense>().ReverseMap();
 
             #endregion
 

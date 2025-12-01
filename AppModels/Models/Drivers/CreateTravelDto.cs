@@ -1,16 +1,15 @@
-﻿using AppModels.Common;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace AppModels.Entities.Drivers
+namespace AppModels.Models.Drivers
 {
-    public class Travel : BaseEntity
+    public sealed class CreateTravelDto
     {
+        public Guid Id { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public string StartLocation { get; set; } = null!;
         public string? Destination { get; set; }
         public string? PlateNumber { get; set; }
-        [Required]
         public decimal Amount { get; set; }
         public string? Notes { get; set; }
     }

@@ -7,6 +7,9 @@ namespace AppModels.Entities.Drivers
         public string Name { get; set; } = null!;
         public string? PhoneNumber { get; set; }
         public string? LicenseNumber { get; set; }
-        public DateTime LicenseExpiry { get; set; }
+        public decimal MoneyBalance { get; set; } = 0m;
+
+        public ICollection<DriverExpense> Expenses { get; set; } = new List<DriverExpense>();
+
     }
 }

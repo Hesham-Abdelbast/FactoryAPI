@@ -77,7 +77,20 @@ namespace DAL.Interface
         /// </summary>
         /// <param name="keys">The primary key values of the data object</param>
         /// <returns>The found data object </returns>
+        Task<TEntity?> FindAsync(CancellationToken cancellationToken = default, params object[] keys);
+
+        /// <summary>
+        /// Find data object with it's keys
+        /// </summary>
+        /// <param name="keys">The primary key values of the data object</param>
+        /// <returns>The found data object </returns>
         Task<TEntity?> FindAsync(params object[] keys);
+        /// <summary>
+        /// Insert new data objects into the data context
+        /// </summary>
+        /// <param name="entities">New data objects to insert into the data context </param>
+        Task InsertAsync(CancellationToken cancellationToken = default, params TEntity[] entities);
+
         /// <summary>
         /// Insert new data objects into the data context
         /// </summary>

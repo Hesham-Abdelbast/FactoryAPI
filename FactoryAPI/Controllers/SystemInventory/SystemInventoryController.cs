@@ -14,13 +14,13 @@ namespace FactoryAPI.Controllers
         // ======================================================================
         // 📊 تقرير العمليات بناءً على التاريخ
         // ======================================================================
-        [HttpGet]
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<TResponse<TrnxReportDto>>> GetTrnxReport(DateTime from, DateTime to)
+        public async Task<ActionResult<TResponse<TrnxReportDto>>> GetTrnxReport([FromBody] TrnxReportRequestDto trnxDto)
         {
             try
             {
-                if (from == default || to == default)
+                if (trnxDto.From == default || trnxDto.To == default)
                 {
                     return Ok(new TResponse<TrnxReportDto>
                     {
@@ -29,7 +29,7 @@ namespace FactoryAPI.Controllers
                     });
                 }
 
-                if (from > to)
+                if (trnxDto.From > trnxDto.To)
                 {
                     return Ok(new TResponse<TrnxReportDto>
                     {
@@ -38,7 +38,7 @@ namespace FactoryAPI.Controllers
                     });
                 }
 
-                var result = await services.GetTrnxReportAsync(from, to);
+                var result = await services.GetTrnxReportAsync(trnxDto);
 
                 return Ok(new TResponse<TrnxReportDto>
                 {
