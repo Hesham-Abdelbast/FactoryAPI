@@ -1,6 +1,7 @@
 ﻿using Application.Interface;
 using AppModels.Common;
 using AppModels.Models;
+using Ejd.GRC.AppModels.Common;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FactoryAPI.Controllers
@@ -9,6 +10,33 @@ namespace FactoryAPI.Controllers
     [Route("api/[controller]/[Action]")]
     public class MaterialTypeController(IMaterialTypeServices services, ILogger<MaterialTypeController> logger) : ControllerBase
     {
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<TResponse<List<MaterialTypeDto>>>> GetAllWithPagination(PaginationEntity param)
+        {
+            try
+            {
+                var result = await services.GetAllAsync(param);
+                return Ok(new TResponse<List<MaterialTypeDto>>()
+                {
+                    Success = true,
+                    Data = result.Data.ToList(),
+                    TotalCount = result.TotalCount,
+                });
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"{GetType().Name}.{nameof(GetAll)}");
+                return Ok(new TResponse<List<MaterialTypeDto>>
+                {
+                    Success = false,
+                    ReturnMsg = ex.Message
+                });
+            }
+        }
+
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]

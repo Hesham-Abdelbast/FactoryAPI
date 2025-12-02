@@ -4,6 +4,7 @@ using DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(FAContext))]
-    partial class FAContextModelSnapshot : ModelSnapshot
+    [Migration("20251202090232_MerchantFinance")]
+    partial class MerchantFinance
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -166,9 +169,6 @@ namespace DAL.Migrations
                     b.Property<string>("Destination")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("DriverId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
@@ -185,6 +185,7 @@ namespace DAL.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("StartLocation")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("UpdateBy")
@@ -194,8 +195,6 @@ namespace DAL.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DriverId");
 
                     b.ToTable("Travel");
                 });
@@ -660,13 +659,16 @@ namespace DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal>("Amount")
+                    b.Property<decimal>("AmountFinance")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid>("CreateBy")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FinanceDate")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsDeleted")
@@ -676,11 +678,7 @@ namespace DAL.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Notes")
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
-
-                    b.Property<DateTime>("OperationDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("UpdateBy")
                         .HasColumnType("uniqueidentifier");
@@ -1135,17 +1133,6 @@ namespace DAL.Migrations
                     b.Navigation("Driver");
                 });
 
-            modelBuilder.Entity("AppModels.Entities.Drivers.Travel", b =>
-                {
-                    b.HasOne("AppModels.Entities.Drivers.Driver", "Driver")
-                        .WithMany("Travels")
-                        .HasForeignKey("DriverId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Driver");
-                });
-
             modelBuilder.Entity("AppModels.Entities.Employees.EmployeeCashAdvance", b =>
                 {
                     b.HasOne("AppModels.Entities.Employees.Employee", "Employee")
@@ -1334,8 +1321,6 @@ namespace DAL.Migrations
             modelBuilder.Entity("AppModels.Entities.Drivers.Driver", b =>
                 {
                     b.Navigation("Expenses");
-
-                    b.Navigation("Travels");
                 });
 
             modelBuilder.Entity("AppModels.Entities.Employees.Employee", b =>

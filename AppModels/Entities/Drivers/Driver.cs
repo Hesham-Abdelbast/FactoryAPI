@@ -10,6 +10,7 @@ namespace AppModels.Entities.Drivers
         public decimal MoneyBalance { get; set; } = 0m;
 
         public ICollection<DriverExpense> Expenses { get; set; } = new List<DriverExpense>();
+        public ICollection<Travel> Travels { get; set; } = new List<Travel>();
 
     }
 }

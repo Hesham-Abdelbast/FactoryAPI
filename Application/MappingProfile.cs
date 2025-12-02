@@ -38,6 +38,9 @@ namespace Application
             _ = CreateMap<MerchantDto, Merchant>()
                 .ReverseMap();
 
+            _ = CreateMap<MerchantFinanceDto, MerchantFinance>()
+                .ReverseMap();
+
             _ = CreateMap<MerchantExpenseDto, MerchantExpense>()
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(x => x.Notes))
                 .ReverseMap()

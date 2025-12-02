@@ -253,12 +253,19 @@ namespace Application.Implementation
         // ============================================================
         public async Task<PagedResult<AllTransByMerchantDto>> GetAllByMerchantIdAsync(Guid merchantId,PaginationEntity param)
         {
+            // all trnx
             var entities = _unitOfWork.Transaction.All
                 .Where(tr => tr.MerchantId == merchantId)
                 .Include(x => x.MaterialType)
                 .Include(x => x.Merchant)
                 .Include(x => x.Warehouse)
                 .AsQueryable();
+
+            // all expense
+            var merchantExpense = _unitOfWork.MerchantExpense.All.Where(x=>x.MerchantId == merchantId);
+
+            // all Finance
+            var merchantFinance = _unitOfWork.MerchantFinance.All.Where(x=>x.MerchantId == merchantId);
 
             entities = entities.Where(x=>x.Merchant.IsDeleted==false);
             entities = entities.Where(x=>x.MaterialType.IsDeleted==false);
@@ -268,13 +275,25 @@ namespace Application.Implementation
             {
                 var fromDate = param.From.Value.Date;
                 entities = entities.Where(x => x.CreateDate >= fromDate);
+                merchantExpense = merchantExpense.Where(x => x.ExpenseDate >= fromDate);
+                merchantFinance = merchantFinance.Where(x => x.OperationDate >= fromDate);
             }
 
             if (param.To.HasValue)
             {
                 var toDate = param.To.Value.Date.AddDays(1).AddTicks(-1);
                 entities = entities.Where(x => x.CreateDate <= toDate);
+                merchantExpense = merchantExpense.Where(x => x.ExpenseDate <= toDate);
+                merchantFinance = merchantFinance.Where(x => x.OperationDate <= toDate);
             }
+
+            var income = entities
+                .Where(x => x.Type == TransactionType.Income)
+                .Sum(x => x.TotalAmount);
+
+            var outcome = entities
+                .Where(x => x.Type == TransactionType.Outcome)
+                .Sum(x => x.TotalAmount);
 
             var totalCount = entities.Count();
             // ===============================
@@ -293,8 +312,13 @@ namespace Application.Implementation
                 TotalMoneyProcessed = res.Sum(e => e.TotalAmount),
                 TotalMoneypay = res.Sum(e => e.AmountPaid),
                 TotalImpurities = res.Sum(e => e.WeightOfImpurities),
-                TotalWight = res.Sum(e => e.Quantity)
+                TotalWight = res.Sum(e => e.Quantity),
+                TotalExpense = merchantExpense.Sum(x=>x.Amount),
+                TotalFinance = merchantFinance.Sum(x=>x.Amount),
             };
+
+            resulat.Balance = (resulat.TotalFinance + income) - (outcome - resulat.TotalMoneypay + resulat.TotalExpense);
+            
             return new PagedResult<AllTransByMerchantDto>
             {
                 Data = resulat,

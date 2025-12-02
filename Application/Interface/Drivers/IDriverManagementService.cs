@@ -23,7 +23,7 @@ namespace Application.Interface.Drivers
         #region Travel
 
         Task<PagedResult<IEnumerable<TravelDto>>> GetAllTravelsAsync(PaginationEntity param, CancellationToken cancellationToken = default);
-
+        Task<PagedResult<IEnumerable<TravelDto>>> GetAllTravelsByDriverIdAsync(Guid driverId, PaginationEntity param, CancellationToken cancellationToken = default);
         Task<TravelDto> GetTravelByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
         Task<Guid> AddTravelAsync(CreateTravelDto entity, CancellationToken cancellationToken = default);
@@ -37,7 +37,7 @@ namespace Application.Interface.Drivers
         #region DriverExpense
 
         Task<PagedResult<IEnumerable<DriverExpenseDto>>> GetAllDriverExpensesAsync(PaginationEntity param, CancellationToken cancellationToken = default);
-
+        Task<PagedResult<IEnumerable<DriverExpenseDto>>> GetAllDriverExpensesByDriverIdAsync(Guid driverId, PaginationEntity param, CancellationToken cancellationToken = default);
         Task<DriverExpenseDto> GetDriverExpenseByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
         Task<Guid> AddDriverExpenseAsync(CreateDriverExpenseDto entity, CancellationToken cancellationToken = default);

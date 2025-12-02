@@ -16,8 +16,11 @@ namespace DAL
         private bool _disposed;
 
         public IMaterialTypeRepository MaterialType { get; set; }
+
         public IMerchantRepository Merchant { get; set; }
         public IMerchantExpenseRepository MerchantExpense { get; set; }
+        public IMerchantFinanceRepository MerchantFinance { get; set; }
+
         public ITransactionRepository Transaction { get; set; }
         public IContactRepository Contact { get; set; }
 
@@ -63,7 +66,8 @@ namespace DAL
             IMerchantExpenseRepository merchantExpenseRepository,
             ITravelRepository travel,
             IDriverExpenseRepository driverExpense,
-            IDriverRepository driver)
+            IDriverRepository driver,
+            IMerchantFinanceRepository merchantFinance)
         {
             _dbContext = dbContext;
             _logger = logger;
@@ -90,6 +94,7 @@ namespace DAL
             Driver = driver;
             DriverExpense = driverExpense;
             Travel = travel;
+            MerchantFinance = merchantFinance;
         }
 
         public void Dispose()

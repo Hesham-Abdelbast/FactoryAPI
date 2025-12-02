@@ -5,7 +5,7 @@ namespace AppModels.Models.Drivers
 {
     public sealed class CreateDriverExpenseDto
     {
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
         public Guid DriverId { get; set; }
         public decimal Amount { get; set; }
         public string? Notes { get; set; }

@@ -1,5 +1,7 @@
-﻿using AppModels.Entities;
+﻿using AppModels.Common;
+using AppModels.Entities;
 using AppModels.Models;
+using Ejd.GRC.AppModels.Common;
 
 namespace Application.Interface
 {
@@ -13,6 +15,7 @@ namespace Application.Interface
 
         // Read (Get all)
         Task<IEnumerable<MaterialTypeDto>> GetAllAsync();
+        Task<PagedResult<IEnumerable<MaterialTypeDto>>> GetAllAsync(PaginationEntity param);
 
         // Update
         Task<bool> UpdateAsync(MaterialTypeDto entity);

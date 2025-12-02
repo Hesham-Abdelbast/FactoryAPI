@@ -1,8 +1,10 @@
 ﻿using Application.Interface;
+using AppModels.Common;
 using AppModels.Entities;
 using AppModels.Models;
 using AutoMapper;
 using DAL;
+using Ejd.GRC.AppModels.Common;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Implementation
@@ -99,6 +101,22 @@ namespace Application.Implementation
             }
         }
 
+        public async Task<PagedResult<IEnumerable<MaterialTypeDto>>> GetAllAsync(PaginationEntity param)
+        {
+            try
+            {
+                var entities = await _unitOfWork.MaterialType.All.ToListAsync();
+                return new PagedResult<IEnumerable<MaterialTypeDto>>()
+                {
+                    Data = _mapper.Map<IEnumerable<MaterialTypeDto>>(entities),
+                    TotalCount = entities.Count
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error while fetching MaterialType list: {ex.Message}", ex);
+            }
+        }
         public async Task<bool> ExistsAsync(Guid id)
         {
             try

@@ -175,6 +175,7 @@ namespace Application
             services.AddScoped<IContactRepository, ContactRepository>();
 
             services.AddScoped<IMerchantRepository, MerchantRepository>();
+            services.AddScoped<IMerchantFinanceRepository, MerchantFinanceRepository>();
             services.AddScoped<IMerchantExpenseRepository, MerchantExpenseRepository>();
 
             services.AddScoped<IWarehouseRepositery, WarehouseRepositery>();

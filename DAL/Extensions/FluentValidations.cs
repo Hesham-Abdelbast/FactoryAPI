@@ -16,6 +16,7 @@ namespace DAL.Extensions
             // Apply global query filters for soft delete
             modelBuilder.Entity<Merchant>().HasQueryFilter(e => !e.IsDeleted);
             modelBuilder.Entity<MerchantExpense>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<MerchantFinance>().HasQueryFilter(e => !e.IsDeleted);
 
             modelBuilder.Entity<MaterialType>().HasQueryFilter(e => !e.IsDeleted);
             modelBuilder.Entity<Transaction>().HasQueryFilter(e => !e.IsDeleted);

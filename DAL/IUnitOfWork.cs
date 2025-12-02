@@ -17,6 +17,7 @@ namespace DAL
 
         #region Repositories
         public IMerchantRepository Merchant { get; set; }
+        public IMerchantFinanceRepository MerchantFinance { get; set; }
         public IMerchantExpenseRepository MerchantExpense { get; set; }
 
         public ITransactionRepository Transaction { get; set; }

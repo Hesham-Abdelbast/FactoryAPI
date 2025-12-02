@@ -194,6 +194,21 @@ namespace Application.Implementation.Drivers
             };
         }
 
+        public async Task<PagedResult<IEnumerable<TravelDto>>> GetAllTravelsByDriverIdAsync(Guid driverId,PaginationEntity param, CancellationToken cancellationToken = default)
+        {
+            var query = _unitOfWork.Travel.All.Where(d => d.DriverId == driverId).OrderBy(x => x.CreateDate);
+
+            var result = await query
+                .Skip(param.PageSize * (param.PageIndex - 1))
+                .Take(param.PageSize)
+                .ToListAsync();
+
+            return new PagedResult<IEnumerable<TravelDto>>()
+            {
+                Data = _mapper.Map<IEnumerable<TravelDto>>(result),
+                TotalCount = query.Count(),
+            };
+        }
         #endregion
 
 
@@ -280,6 +295,22 @@ namespace Application.Implementation.Drivers
             {
                 Data = _mapper.Map<IEnumerable<DriverExpenseDto>>(result),
                 TotalCount =query.Count()
+            };
+        }
+
+        public async Task<PagedResult<IEnumerable<DriverExpenseDto>>> GetAllDriverExpensesByDriverIdAsync(Guid driverId,PaginationEntity param, CancellationToken cancellationToken = default)
+        {
+            var query = _unitOfWork.DriverExpense.All.AsNoTracking().Where(x => x.DriverId == driverId);
+
+            var result = await query
+                .Skip(param.PageSize * (param.PageIndex - 1))
+                .Take(param.PageSize)
+                .ToListAsync();
+
+            return new PagedResult<IEnumerable<DriverExpenseDto>>()
+            {
+                Data = _mapper.Map<IEnumerable<DriverExpenseDto>>(result),
+                TotalCount = query.Count()
             };
         }
 

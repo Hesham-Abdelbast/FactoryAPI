@@ -167,6 +167,20 @@ namespace FactoryAPI.Controllers.Drivers
             }
         }
 
+        [HttpPost("{driverId:guid}")]
+        public async Task<ActionResult<TResponse<IEnumerable<TravelDto>>>> GetAllTravelsByDriverId(Guid driverId, [FromBody] PaginationEntity param)
+        {
+            try
+            {
+                var result = await service.GetAllTravelsByDriverIdAsync(driverId, param);
+                return Ok(new TResponse<IEnumerable<TravelDto>> { Success = true, Data = result.Data, TotalCount = result.TotalCount });
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"{nameof(GetAllTravelsByDriverId)}");
+                return Ok(new TResponse<IEnumerable<TravelDto>> { Success = false, ReturnMsg = ex.Message });
+            }
+        }
         #endregion
 
 
@@ -228,6 +242,20 @@ namespace FactoryAPI.Controllers.Drivers
             catch (Exception ex)
             {
                 logger.LogError(ex, $"{nameof(GetAllExpenses)}");
+                return Ok(new TResponse<IEnumerable<DriverExpenseDto>> { Success = false, ReturnMsg = ex.Message });
+            }
+        }
+        [HttpPost("{driverId:guid}")]
+        public async Task<ActionResult<TResponse<IEnumerable<DriverExpenseDto>>>> GetAllExpensesByDriverId(Guid driverId,[FromBody] PaginationEntity param)
+        {
+            try
+            {
+                var result = await service.GetAllDriverExpensesByDriverIdAsync(driverId,param);
+                return Ok(new TResponse<IEnumerable<DriverExpenseDto>> { Success = true, Data = result.Data, TotalCount = result.TotalCount });
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"{nameof(GetAllExpensesByDriverId)}");
                 return Ok(new TResponse<IEnumerable<DriverExpenseDto>> { Success = false, ReturnMsg = ex.Message });
             }
         }

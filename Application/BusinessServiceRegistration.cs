@@ -39,6 +39,7 @@ namespace Application
             services.AddScoped<IFileServices, FileServices>();
 
             services.AddScoped<IMerchantServices, MerchantServices>();
+            services.AddScoped<IMerchantFinanceServices, MerchantFinanceServices>();
             services.AddScoped<IMerchantExpenseService, MerchantExpenseService>();
 
             services.AddScoped<IMaterialTypeServices, MaterialTypeServices>();
