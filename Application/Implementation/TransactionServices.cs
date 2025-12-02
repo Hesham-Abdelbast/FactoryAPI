@@ -295,6 +295,7 @@ namespace Application.Implementation
                 .Where(x => x.Type == TransactionType.Outcome)
                 .Sum(x => x.TotalAmount);
 
+            var entitesBefores = entities;
             var totalCount = entities.Count();
             // ===============================
             // 📄 Pagination
@@ -309,10 +310,10 @@ namespace Application.Implementation
             var resulat = new AllTransByMerchantDto
             {
                 Transactions = _mapper.Map<List<TransactionDto>>(res),
-                TotalMoneyProcessed = res.Sum(e => e.TotalAmount),
-                TotalMoneypay = res.Sum(e => e.AmountPaid),
-                TotalImpurities = res.Sum(e => e.WeightOfImpurities),
-                TotalWight = res.Sum(e => e.Quantity),
+                TotalMoneyProcessed = entitesBefores.Sum(e => e.TotalAmount),
+                TotalMoneypay = entitesBefores.Sum(e => e.AmountPaid),
+                TotalImpurities = entitesBefores.Sum(e => e.WeightOfImpurities),
+                TotalWight = entitesBefores.Sum(e => e.Quantity),
                 TotalExpense = merchantExpense.Sum(x=>x.Amount),
                 TotalFinance = merchantFinance.Sum(x=>x.Amount),
             };
