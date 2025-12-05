@@ -1,5 +1,7 @@
 ﻿using AppModels.Common;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
+using System.Net.Mail;
 
 namespace AppModels.Entities.Employees
 {
@@ -16,6 +18,9 @@ namespace AppModels.Entities.Employees
         public decimal BaseSalary { get; set; } // المرتب
 
         public string? Notes { get; set; }
+
+        public DateTime StartWorkDate { get; set; }
+        public DateTime EndWorkDate { get; set; }
 
         // تنقلات
         public ICollection<EmployeePersonalExpense> PersonalExpenses { get; set; } = new List<EmployeePersonalExpense>();

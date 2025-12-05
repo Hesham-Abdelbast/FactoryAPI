@@ -156,7 +156,27 @@ namespace FactoryAPI.Controllers
             catch (Exception ex)
             {
                 logger.LogError(ex, $"{GetType().Name}.{nameof(GetById)}");
-                return Ok(new TResponse<TransactionDto> { Success = false, ReturnMsg = "حدث خطأ أثناء جلب الفاتوره: " + ex.Message });
+                return Ok(new TResponse<InvoiceDto> { Success = false, ReturnMsg = "حدث خطأ أثناء جلب الفاتوره: " + ex.Message });
+            }
+        }
+
+        [HttpPost()]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<TResponse<InvoiceLstDto?>>> GetInvoiceByIdsAsync(List<Guid> ids)
+        {
+            try
+            {
+                var result = await services.GetInvoiceByIdsAsync(ids);
+                if (result == null)
+                    return Ok(new TResponse<InvoiceLstDto> { Success = false, ReturnMsg = "لم يتم العثور على الفاتوره المطلوبة." });
+
+                return Ok(new TResponse<InvoiceLstDto> { Success = true, Data = result, ReturnMsg = "تم جلب الفاتوره بنجاح." });
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"{GetType().Name}.{nameof(GetInvoiceByIdsAsync)}");
+                return Ok(new TResponse<InvoiceLstDto> { Success = false, ReturnMsg = "حدث خطأ أثناء جلب الفاتوره: " + ex.Message });
             }
         }
         // ============================================================

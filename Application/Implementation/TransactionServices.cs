@@ -7,10 +7,7 @@ using AppModels.Models.Transaction;
 using AutoMapper;
 using DAL;
 using Ejd.GRC.AppModels.Common;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
 namespace Application.Implementation
 {
     public class TransactionServices : ITransactionServices
@@ -384,6 +381,23 @@ namespace Application.Implementation
             };
 
             return invoiceDto;
+        }
+
+        public async Task<InvoiceLstDto> GetInvoiceByIdsAsync(List<Guid> ids)
+        {
+            var listOfTrnx = _unitOfWork.Transaction.All
+                .Include(x=>x.Warehouse)
+                .Include(x=>x.Merchant)
+                .Include(x=>x.MaterialType)
+                .Where(x=>ids.Contains(x.Id)).ToList();
+
+            return new InvoiceLstDto
+            {
+                Transactions = _mapper.Map<List<TransactionDto>>(listOfTrnx),
+                TotalAmount = listOfTrnx.Sum(x => x.TotalAmount),
+                TotalAmountPaid = listOfTrnx.Sum(x=>x.AmountPaid),
+                TotalQuantity = listOfTrnx.Sum(x=>x.Quantity),
+            };
         }
 
         #region Private Methods

@@ -17,6 +17,7 @@ namespace Application.Interface
 
         // Read (Get by Id)
         Task<InvoiceDto?> GetInvoiceByIdAsync(Guid id);
+        Task<InvoiceLstDto> GetInvoiceByIdsAsync(List<Guid> ids);
 
         // Read (Get all)
         Task<PagedResult<IEnumerable<TransactionDto>>> GetAllAsync(PaginationEntity param);
